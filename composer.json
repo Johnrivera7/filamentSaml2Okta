@@ -1,0 +1,57 @@
+{
+    "name": "johnriveragonzalez/saml2-okta",
+    "description": "Plugin de Filament para autenticación SAML2 con Okta",
+    "keywords": [
+        "filament",
+        "saml2",
+        "okta",
+        "authentication",
+        "laravel"
+    ],
+    "homepage": "https://github.com/tdx/saml2-okta",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "TDX",
+            "email": "info@tdx.cl"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "filament/filament": "^3.0",
+        "laravel/socialite": "^5.0",
+        "socialiteproviders/saml2": "^4.7",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0",
+        "pestphp/pest": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "JohnRiveraGonzalez\\Saml2Okta\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JohnRiveraGonzalez\\Saml2Okta\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "test-coverage": "pest --coverage"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JohnRiveraGonzalez\\Saml2Okta\\Saml2OktaServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
