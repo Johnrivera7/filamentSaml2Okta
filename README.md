@@ -29,20 +29,22 @@ Un plugin completo para Laravel Filament que proporciona autenticación SAML2 co
 
 ## 🛠️ Instalación
 
-### 1. Instalar el plugin
+### Instalación en Desarrollo
+
+#### 1. Instalar el plugin
 
 ```bash
 composer require johnriveragonzalez/saml2-okta
 ```
 
-### 2. Publicar y ejecutar migraciones
+#### 2. Publicar y ejecutar migraciones
 
 ```bash
 php artisan vendor:publish --tag="saml2-okta-migrations"
 php artisan migrate
 ```
 
-### 3. Registrar el plugin en Filament
+#### 3. Registrar el plugin en Filament
 
 Agregar en `app/Providers/Filament/AdminPanelProvider.php`:
 
@@ -59,7 +61,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### 4. Ejecutar comandos de instalación
+#### 4. Ejecutar comandos de instalación
 
 ```bash
 php artisan saml2-okta:install
@@ -71,16 +73,138 @@ Este comando ejecutará automáticamente:
 - ✅ Registro de middleware
 - ✅ Configuración inicial
 
-### 5. Publicar traducciones (opcional)
+#### 5. Publicar traducciones (opcional)
 
 ```bash
 php artisan vendor:publish --tag="saml2-okta-translations"
 ```
 
-### 6. Publicar configuración (opcional)
+#### 6. Publicar configuración (opcional)
 
 ```bash
 php artisan vendor:publish --tag="saml2-okta-config"
+```
+
+---
+
+### 🚀 Instalación en Producción
+
+#### Opción 1: Instalación Automática (Recomendada)
+
+```bash
+# 1. Instalar el plugin
+composer require johnriveragonzalez/saml2-okta --no-dev --optimize-autoloader
+
+# 2. Publicar y ejecutar migraciones
+php artisan vendor:publish --tag="saml2-okta-migrations"
+php artisan migrate --force
+
+# 3. Ejecutar instalación automática
+php artisan saml2-okta:install
+
+# 4. Optimizar aplicación
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+```
+
+#### Opción 2: Instalación Manual Paso a Paso
+
+```bash
+# 1. Instalar dependencias
+composer require johnriveragonzalez/saml2-okta --no-dev --optimize-autoloader
+
+# 2. Publicar migraciones
+php artisan vendor:publish --tag="saml2-okta-migrations"
+
+# 3. Ejecutar migraciones
+php artisan migrate --force
+
+# 4. Extender modelo User
+php artisan saml2-okta:extend-user-model
+
+# 5. Extender UserResource
+php artisan saml2-okta:extend-user-resource
+
+# 6. Registrar plugin en AdminPanelProvider.php (ver paso 3 arriba)
+
+# 7. Optimizar aplicación
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+```
+
+#### ⚠️ Consideraciones Importantes para Producción
+
+1. **Permisos de Archivos:**
+   ```bash
+   # Asegurar que storage y cache sean escribibles
+   chmod -R 775 storage bootstrap/cache
+   chown -R www-data:www-data storage bootstrap/cache
+   ```
+
+2. **Variables de Entorno:**
+   - Asegúrate de tener `APP_ENV=production` en tu archivo `.env`
+   - Configura `APP_DEBUG=false`
+   - Usa `APP_URL` con tu dominio real (HTTPS)
+
+3. **HTTPS Obligatorio:**
+   - SAML2 requiere HTTPS en producción
+   - Configura SSL/TLS en tu servidor web
+   - El callback URL debe usar `https://`
+
+4. **Optimización:**
+   ```bash
+   # Después de cualquier cambio en producción, ejecutar:
+   php artisan optimize:clear
+   php artisan optimize
+   ```
+
+5. **Base de Datos:**
+   - Usa conexión segura a la base de datos
+   - Realiza backup antes de ejecutar migraciones
+   - Verifica que la tabla `saml2_okta_configs` se haya creado correctamente
+
+6. **Logs y Debug:**
+   - En producción, desactiva el modo debug del plugin después de configurar
+   - Los logs se guardan en `storage/logs/saml2-debug-YYYY-MM-DD.log`
+   - Configura rotación de logs para evitar llenar el disco
+
+#### 🔒 Post-Instalación en Producción
+
+1. **Configurar Okta/Proveedor SAML2:**
+   - Accede a `/admin/saml2-settings`
+   - Configura los datos de tu proveedor de identidad
+   - Genera los certificados SAML2
+   - Descarga el certificado SP para subirlo a Okta
+
+2. **Verificar Callback URL:**
+   - Debe ser: `https://tu-dominio.com/saml2/callback`
+   - Configúralo en tu proveedor SAML2 (Okta, Azure AD, etc.)
+
+3. **Probar la Autenticación:**
+   - Usa el modo debug temporalmente para verificar
+   - Prueba el flujo completo de login
+   - Verifica que los usuarios se creen/actualicen correctamente
+   - Desactiva el modo debug después de probar
+
+4. **Configurar Roles y Permisos:**
+   - Define el rol por defecto para nuevos usuarios
+   - Configura el mapeo de campos SAML
+   - Verifica que los usuarios tengan los permisos correctos
+
+#### 📊 Monitoreo en Producción
+
+```bash
+# Ver logs en tiempo real
+tail -f storage/logs/laravel.log
+tail -f storage/logs/saml2-debug-*.log
+
+# Verificar estado de la configuración
+php artisan tinker
+>>> \JohnRiveraGonzalez\Saml2Okta\Models\Saml2OktaConfig::where('is_active', true)->first()
 ```
 
 ## ⚙️ Configuración
