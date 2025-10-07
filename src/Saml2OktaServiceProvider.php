@@ -52,10 +52,18 @@ class Saml2OktaServiceProvider extends ServiceProvider
         // Registrar vistas
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'saml2-okta');
         
+        // Registrar traducciones
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'saml2-okta');
+        
         // Publicar vista de extensión de login
         $this->publishes([
             __DIR__ . '/../resources/views/extend-login.blade.php' => resource_path('views/vendor/saml2-okta/extend-login.blade.php'),
         ], 'saml2-okta-views');
+        
+        // Publicar traducciones
+        $this->publishes([
+            __DIR__ . '/../lang' => $this->app->langPath('vendor/saml2-okta'),
+        ], 'saml2-okta-translations');
         
         // Registrar comandos
         if ($this->app->runningInConsole()) {
@@ -84,5 +92,10 @@ class Saml2OktaServiceProvider extends ServiceProvider
     {
         // Registrar configuración
         $this->mergeConfigFrom(__DIR__ . '/../config/saml2-okta.php', 'saml2-okta');
+        
+        // Publicar configuración
+        $this->publishes([
+            __DIR__ . '/../config/saml2-okta.php' => config_path('saml2-okta.php'),
+        ], 'saml2-okta-config');
     }
 }

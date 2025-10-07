@@ -12,6 +12,8 @@ Un plugin completo para Laravel Filament que proporciona autenticación SAML2 co
 - ✅ **Botón de login dinámico** en la página de autenticación
 - ✅ **Configuración desde base de datos** (no archivos .env)
 - ✅ **Instalación completamente automática**
+- ✅ **Soporte multiidioma** (Inglés y Español)
+- ✅ **Cumple normas de plugins de Filament**
 
 ## 📋 Requisitos
 
@@ -62,6 +64,18 @@ Este comando ejecutará automáticamente:
 - ✅ Extensión del UserResource
 - ✅ Registro de middleware
 - ✅ Configuración inicial
+
+### 5. Publicar traducciones (opcional)
+
+```bash
+php artisan vendor:publish --tag="saml2-okta-translations"
+```
+
+### 6. Publicar configuración (opcional)
+
+```bash
+php artisan vendor:publish --tag="saml2-okta-config"
+```
 
 ## ⚙️ Configuración
 
@@ -146,6 +160,29 @@ packages/johnriveragonzalez/saml2-okta/
 ├── resources/views/       # Vistas Blade
 └── routes/               # Rutas web
 ```
+
+## 🌐 Multiidioma
+
+El plugin incluye soporte para múltiples idiomas:
+
+- **Inglés** (en) - Idioma por defecto
+- **Español** (es) - Traducción completa
+
+### Cambiar idioma
+
+1. **Publicar traducciones:**
+   ```bash
+   php artisan vendor:publish --tag="saml2-okta-translations"
+   ```
+
+2. **Configurar idioma en Laravel:**
+   ```php
+   // config/app.php
+   'locale' => 'es', // Para español
+   ```
+
+3. **Personalizar traducciones:**
+   Edita los archivos en `lang/vendor/saml2-okta/`
 
 ## 🔄 Comandos Disponibles
 

@@ -1,24 +1,30 @@
 {
     "name": "johnriveragonzalez/saml2-okta",
-    "description": "Plugin de Filament para autenticación SAML2 con Okta",
+    "description": "Complete SAML2 authentication plugin for Filament with Okta and other providers",
     "keywords": [
         "filament",
+        "filament-plugin",
         "saml2",
         "okta",
         "authentication",
-        "laravel"
+        "laravel",
+        "sso",
+        "identity-provider"
     ],
     "homepage": "https://github.com/Johnrivera7/filamentSaml2Okta",
     "license": "MIT",
     "authors": [
         {
             "name": "John Rivera Gonzalez",
-            "email": "johnriveragonzalez7@gmail.com"
+            "email": "johnriveragonzalez7@gmail.com",
+            "homepage": "https://github.com/Johnrivera7",
+            "role": "Developer"
         }
     ],
     "support": {
         "issues": "https://github.com/Johnrivera7/filamentSaml2Okta/issues",
-        "source": "https://github.com/Johnrivera7/filamentSaml2Okta"
+        "source": "https://github.com/Johnrivera7/filamentSaml2Okta",
+        "docs": "https://github.com/Johnrivera7/filamentSaml2Okta#readme"
     },
     "require": {
         "php": "^8.1",
