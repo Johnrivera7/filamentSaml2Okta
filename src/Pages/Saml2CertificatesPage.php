@@ -329,20 +329,44 @@ class Saml2CertificatesPage extends Page implements HasForms
         }
     }
 
-    public function downloadCertificate(): void
+    public function downloadCertificate()
     {
-        if ($this->certificateContent) {
-            $filename = 'saml_certificate_' . $this->domain . '.pem';
-            $this->js('downloadTextAsFile(arguments[0], arguments[1])', $this->certificateContent, $filename);
+        if (!$this->certificateContent) {
+            Notification::make()
+                ->title('Error')
+                ->body('No hay certificado disponible para descargar')
+                ->danger()
+                ->send();
+            return null;
         }
+
+        $filename = 'saml_certificate_' . ($this->domain ?? 'cert') . '.pem';
+        
+        return response()->streamDownload(function () {
+            echo $this->certificateContent;
+        }, $filename, [
+            'Content-Type' => 'application/x-pem-file',
+        ]);
     }
 
-    public function downloadPrivateKey(): void
+    public function downloadPrivateKey()
     {
-        if ($this->privateKeyContent) {
-            $filename = 'saml_private_key_' . $this->domain . '.pem';
-            $this->js('downloadTextAsFile(arguments[0], arguments[1])', $this->privateKeyContent, $filename);
+        if (!$this->privateKeyContent) {
+            Notification::make()
+                ->title('Error')
+                ->body('No hay clave privada disponible para descargar')
+                ->danger()
+                ->send();
+            return null;
         }
+
+        $filename = 'saml_private_key_' . ($this->domain ?? 'key') . '.pem';
+        
+        return response()->streamDownload(function () {
+            echo $this->privateKeyContent;
+        }, $filename, [
+            'Content-Type' => 'application/x-pem-file',
+        ]);
     }
 
     public static function canAccess(): bool
