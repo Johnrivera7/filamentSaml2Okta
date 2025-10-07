@@ -3,7 +3,6 @@
 namespace JohnRiveraGonzalez\Saml2Okta;
 
 use Illuminate\Support\ServiceProvider;
-use Spatie\LaravelPackageTools\Package;
 use JohnRiveraGonzalez\Saml2Okta\Commands\InstallCommand;
 use JohnRiveraGonzalez\Saml2Okta\Commands\ExtendUserModelCommand;
 use JohnRiveraGonzalez\Saml2Okta\Commands\ExtendUserResourceCommand;
