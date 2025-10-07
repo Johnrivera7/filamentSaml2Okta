@@ -1,7 +1,7 @@
 # Filament SAML2 Okta Plugin
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/logo.png" alt="Filament SAML2 Plugin" width="600">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/logo.svg" alt="Filament SAML2 Plugin" width="600">
 </div>
 
 Un plugin completo para Laravel Filament que proporciona autenticación SAML2 con Okta y otros proveedores de identidad.
@@ -90,7 +90,8 @@ php artisan vendor:publish --tag="saml2-okta-config"
 Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament.
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-main.png" alt="Configuración Principal SAML2" width="800">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/placeholder.svg" alt="Configuración Principal SAML2" width="800">
+  <p><em>Pantalla principal de configuración SAML2</em></p>
 </div>
 
 ### 2. Configurar Okta
@@ -98,7 +99,8 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 #### **Configuración Básica y del Proveedor de Identidad:**
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-okta.png" alt="Configuración de Okta" width="800">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/placeholder.svg" alt="Configuración de Okta" width="800">
+  <p><em>Configuración de Okta y proveedor de identidad</em></p>
 </div>
 
 1. **Configuración de Okta:**
@@ -111,7 +113,8 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 #### **Configuración del Proveedor de Servicio:**
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-sp.png" alt="Configuración del Proveedor de Servicio" width="800">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/placeholder.svg" alt="Configuración del Proveedor de Servicio" width="800">
+  <p><em>Configuración del proveedor de servicio</em></p>
 </div>
 
 2. **Configuración de la aplicación:**
@@ -123,7 +126,8 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 ### 3. Configurar usuarios
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-users.png" alt="Configuración de Usuarios" width="800">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/placeholder.svg" alt="Configuración de Usuarios" width="800">
+  <p><em>Configuración de usuarios SAML2</em></p>
 </div>
 
 - **Auto crear usuarios**: Crear usuarios automáticamente al hacer login
@@ -134,7 +138,8 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 ### 4. Configurar interfaz
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-interface.png" alt="Configuración de la Interfaz" width="800">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/placeholder.svg" alt="Configuración de la Interfaz" width="800">
+  <p><em>Configuración de la interfaz y botón de login</em></p>
 </div>
 
 - **Activar autenticación SAML2**: Habilitar/deshabilitar el botón de login
@@ -169,7 +174,8 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 ### Modo Debug
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/debug-logs.png" alt="Debug y Logs SAML2" width="800">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/placeholder.svg" alt="Debug y Logs SAML2" width="800">
+  <p><em>Pantalla de debug y logs SAML2</em></p>
 </div>
 
 - **Activar debug**: Habilitar logging detallado
@@ -179,7 +185,8 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 ### Mapeador de Campos
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/field-mapper.png" alt="Mapeador de Campos SAML2" width="800">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/placeholder.svg" alt="Mapeador de Campos SAML2" width="800">
+  <p><em>Mapeador de campos SAML2</em></p>
 </div>
 
 - **Mapeo visual**: Configurar qué campos SAML van a qué campos User
