@@ -9,7 +9,9 @@ Un plugin completo para Laravel Filament que proporciona autenticación SAML2 co
 - ✅ **Generación automática de certificados** SAML2
 - ✅ **Modo debug** con logging detallado
 - ✅ **Mapeador visual de campos** SAML a User
-- ✅ **Botón de login dinámico** en la página de autenticación
+- ✅ **Botón de login dinámico** con iconos personalizados
+- ✅ **Iconos de proveedores** (Okta, Microsoft, Google, Auth0)
+- ✅ **Soporte para Heroicons** y SVG personalizados
 - ✅ **Configuración desde base de datos** (no archivos .env)
 - ✅ **Instalación completamente automática**
 - ✅ **Soporte multiidioma** (Inglés y Español)
@@ -109,7 +111,23 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 
 - **Activar autenticación SAML2**: Habilitar/deshabilitar el botón de login
 - **Etiqueta del botón**: Texto del botón (ej: "Iniciar sesión con Okta")
-- **Icono del botón**: Icono de Heroicons (ej: "rocket-launch")
+- **Icono del botón**: Seleccionar icono de proveedor o Heroicon
+
+#### **Iconos de Proveedores Disponibles:**
+- **Okta** - Icono oficial de Okta
+- **Microsoft** - Icono oficial de Microsoft  
+- **Google** - Icono oficial de Google
+- **Auth0** - Icono oficial de Auth0
+
+#### **Heroicons Disponibles:**
+- **Shield Check** - `heroicon-o-shield-check`
+- **Lock Closed** - `heroicon-o-lock-closed`
+- **Key** - `heroicon-o-key`
+- **Rocket Launch** - `heroicon-o-rocket-launch`
+- **User** - `heroicon-o-user`
+- **Login** - `heroicon-o-login`
+- **Identification** - `heroicon-o-identification`
+- **Finger Print** - `heroicon-o-finger-print`
 
 ## 🔧 Funcionalidades
 
@@ -136,14 +154,21 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 
 Este plugin funciona con cualquier proveedor SAML2, incluyendo:
 
-- ✅ **Okta** (principalmente probado)
-- ✅ **Azure AD / Microsoft Entra ID**
-- ✅ **Google Workspace**
-- ✅ **Auth0**
-- ✅ **OneLogin**
-- ✅ **Ping Identity**
-- ✅ **Shibboleth**
-- ✅ **ADFS (Active Directory Federation Services)**
+### **Proveedores Principales (con iconos personalizados):**
+- ✅ **Okta** - Icono oficial incluido
+- ✅ **Microsoft / Azure AD** - Icono oficial incluido
+- ✅ **Google Workspace** - Icono oficial incluido
+- ✅ **Auth0** - Icono oficial incluido
+
+### **Otros Proveedores SAML2:**
+- ✅ **OneLogin** - Compatible (usa Heroicons)
+- ✅ **Ping Identity** - Compatible (usa Heroicons)
+- ✅ **Shibboleth** - Compatible (usa Heroicons)
+- ✅ **ADFS (Active Directory Federation Services)** - Compatible (usa Heroicons)
+- ✅ **Cualquier proveedor SAML2 estándar** - Compatible (usa Heroicons)
+
+### **Nota sobre Auth0:**
+Auth0 es principalmente un proveedor OAuth/OIDC, pero también soporta SAML2. Si usas Auth0 con SAML2, el plugin funcionará perfectamente y tendrás el icono oficial de Auth0 disponible.
 
 ## 📁 Estructura del Plugin
 
@@ -210,12 +235,56 @@ php artisan saml2-okta:unregister-middleware
 - **Extensión automática** - Extiende User model y UserResource automáticamente
 - **Middleware automático** - Registra middleware para inyectar botón de login
 
+## 🎨 Personalización de Iconos
+
+### **Agregar Nuevos Iconos de Proveedores:**
+
+1. **Crear archivo SVG:**
+   ```bash
+   # Crear en resources/views/icons/
+   touch resources/views/icons/tu-proveedor.blade.php
+   ```
+
+2. **Estructura del archivo:**
+   ```php
+   {{-- Tu Proveedor Icon --}}
+   <svg viewBox="0 0 24 24" class="w-5 h-5 {{ $class ?? '' }}" fill="currentColor">
+       <!-- Tu SVG aquí -->
+   </svg>
+   ```
+
+3. **Actualizar opciones en configuración:**
+   ```php
+   Select::make('button_icon')
+       ->options([
+           'okta' => 'Okta',
+           'microsoft' => 'Microsoft',
+           'google' => 'Google',
+           'auth0' => 'Auth0',
+           'tu-proveedor' => 'Tu Proveedor', // ← Agregar aquí
+           // ...
+       ])
+   ```
+
+### **Usar Heroicons:**
+```php
+'button_icon' => 'heroicon-o-rocket-launch'
+'button_label' => 'Iniciar sesión con SAML2'
+```
+
+### **Usar Iconos de Proveedores:**
+```php
+'button_icon' => 'okta'
+'button_label' => 'Iniciar sesión con Okta'
+```
+
 ## 🔮 Futuras Mejoras
 
 - [ ] **Soporte genérico** - Renombrar a `filament-saml2` para soporte universal
-- [ ] **Más proveedores** - Ejemplos específicos para Azure AD, Google, etc.
+- [ ] **Más iconos de proveedores** - OneLogin, Ping Identity, Shibboleth, etc.
 - [ ] **Temas personalizables** - Personalizar apariencia del botón de login
 - [ ] **Múltiples proveedores** - Soporte para varios proveedores SAML2 simultáneos
+- [ ] **Iconos personalizados** - Subir iconos SVG desde la interfaz
 
 ## 📄 Licencia
 
