@@ -1,5 +1,9 @@
 # Filament SAML2 Okta Plugin
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/logo.png" alt="Filament SAML2 Plugin" width="600">
+</div>
+
 Un plugin completo para Laravel Filament que proporciona autenticación SAML2 con Okta y otros proveedores de identidad.
 
 ## 🚀 Características
@@ -85,7 +89,17 @@ php artisan vendor:publish --tag="saml2-okta-config"
 
 Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament.
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-main.png" alt="Configuración Principal SAML2" width="800">
+</div>
+
 ### 2. Configurar Okta
+
+#### **Configuración Básica y del Proveedor de Identidad:**
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-okta.png" alt="Configuración de Okta" width="800">
+</div>
 
 1. **Configuración de Okta:**
    - `Client ID`: ID de tu aplicación en Okta
@@ -93,6 +107,12 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
    - `IDP Entity ID`: Entity ID de Okta
    - `IDP SSO URL`: URL de SSO de Okta
    - `IDP X.509 Certificate`: Certificado de Okta
+
+#### **Configuración del Proveedor de Servicio:**
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-sp.png" alt="Configuración del Proveedor de Servicio" width="800">
+</div>
 
 2. **Configuración de la aplicación:**
    - `SP Entity ID`: Se genera automáticamente
@@ -102,12 +122,20 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 
 ### 3. Configurar usuarios
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-users.png" alt="Configuración de Usuarios" width="800">
+</div>
+
 - **Auto crear usuarios**: Crear usuarios automáticamente al hacer login
 - **Auto actualizar usuarios**: Actualizar datos de usuarios existentes
 - **Marcar como externos**: Marcar usuarios SAML2 como externos
 - **Rol por defecto**: Rol asignado a nuevos usuarios
 
 ### 4. Configurar interfaz
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/config-interface.png" alt="Configuración de la Interfaz" width="800">
+</div>
 
 - **Activar autenticación SAML2**: Habilitar/deshabilitar el botón de login
 - **Etiqueta del botón**: Texto del botón (ej: "Iniciar sesión con Okta")
@@ -140,11 +168,19 @@ Una vez instalado, ve a **SAML2 > Configuración SAML2** en el panel de Filament
 
 ### Modo Debug
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/debug-logs.png" alt="Debug y Logs SAML2" width="800">
+</div>
+
 - **Activar debug**: Habilitar logging detallado
 - **Ver logs**: Revisar logs de autenticación SAML2
 - **Analizar campos**: Ver qué campos envía Okta
 
 ### Mapeador de Campos
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Johnrivera7/filamentSaml2Okta/master/docs/field-mapper.png" alt="Mapeador de Campos SAML2" width="800">
+</div>
 
 - **Mapeo visual**: Configurar qué campos SAML van a qué campos User
 - **Datos reales**: Ver datos reales de Okta para configurar mapeos
