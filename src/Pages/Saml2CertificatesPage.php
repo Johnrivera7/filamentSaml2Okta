@@ -34,12 +34,23 @@ class Saml2CertificatesPage extends Page implements HasForms
     public ?string $certificateContent = null;
     public ?string $privateKeyContent = null;
 
-    protected CertificateService $certificateService;
+    protected function getCertificateService(): CertificateService
+    {
+        return new CertificateService();
+    }
 
     public function mount(): void
     {
-        $this->certificateService = new CertificateService();
         $this->loadCurrentConfig();
+        
+        // Llenar el formulario con los datos actuales
+        $this->form->fill([
+            'domain' => $this->domain,
+            'organization' => $this->organization,
+            'certificateContent' => $this->certificateContent,
+            'privateKeyContent' => $this->privateKeyContent,
+            'certificateInfo' => $this->certificateInfo,
+        ]);
     }
 
     public function form(Form $form): Form
@@ -188,6 +199,11 @@ class Saml2CertificatesPage extends Page implements HasForms
             // Extraer dominio de la Entity ID
             $parsedUrl = parse_url($config->sp_entity_id);
             $this->domain = $parsedUrl['host'] ?? null;
+            $this->organization = $config->name ?? 'SAML2 Okta Plugin';
+            
+            // Cargar certificados desde la configuración
+            $this->certificateContent = $config->sp_x509_cert;
+            $this->privateKeyContent = $config->sp_private_key;
             
             if ($this->domain) {
                 $this->loadCertificateInfo();
@@ -201,10 +217,11 @@ class Saml2CertificatesPage extends Page implements HasForms
             return;
         }
 
-        $this->certificateInfo = $this->certificateService->getCertificateInfo($this->domain);
+        $certificateService = $this->getCertificateService();
+        $this->certificateInfo = $certificateService->getCertificateInfo($this->domain);
         
         if ($this->certificateInfo) {
-            $certificate = $this->certificateService->getCertificate($this->domain);
+            $certificate = $certificateService->getCertificate($this->domain);
             $this->certificateContent = $certificate['certificate'] ?? null;
             $this->privateKeyContent = $certificate['private_key'] ?? null;
         }
@@ -221,7 +238,8 @@ class Saml2CertificatesPage extends Page implements HasForms
             return;
         }
 
-        $result = $this->certificateService->generateCertificate($this->domain, $this->organization);
+        $certificateService = $this->getCertificateService();
+        $result = $certificateService->generateCertificate($this->domain, $this->organization);
 
         if ($result['success']) {
             $this->certificateContent = $result['certificate'];
@@ -248,7 +266,8 @@ class Saml2CertificatesPage extends Page implements HasForms
             return;
         }
 
-        $result = $this->certificateService->regenerateCertificate($this->domain, $this->organization);
+        $certificateService = $this->getCertificateService();
+        $result = $certificateService->regenerateCertificate($this->domain, $this->organization);
 
         if ($result['success']) {
             $this->certificateContent = $result['certificate'];
@@ -285,7 +304,8 @@ class Saml2CertificatesPage extends Page implements HasForms
             return;
         }
 
-        $deleted = $this->certificateService->deleteCertificate($this->domain);
+        $certificateService = $this->getCertificateService();
+        $deleted = $certificateService->deleteCertificate($this->domain);
         
         if ($deleted) {
             $this->certificateInfo = null;
@@ -308,10 +328,11 @@ class Saml2CertificatesPage extends Page implements HasForms
     public function copyCertificate(): void
     {
         if ($this->certificateContent) {
-            $this->js('navigator.clipboard.writeText(arguments[0])', $this->certificateContent);
+            $this->dispatch('copy-to-clipboard', content: $this->certificateContent);
             
             Notification::make()
-                ->title('Certificado copiado al portapapeles')
+                ->title('Certificado copiado')
+                ->body('El certificado ha sido copiado al portapapeles')
                 ->success()
                 ->send();
         }
@@ -320,10 +341,11 @@ class Saml2CertificatesPage extends Page implements HasForms
     public function copyPrivateKey(): void
     {
         if ($this->privateKeyContent) {
-            $this->js('navigator.clipboard.writeText(arguments[0])', $this->privateKeyContent);
+            $this->dispatch('copy-to-clipboard', content: $this->privateKeyContent);
             
             Notification::make()
-                ->title('Clave privada copiada al portapapeles')
+                ->title('Clave privada copiada')
+                ->body('La clave privada ha sido copiada al portapapeles')
                 ->success()
                 ->send();
         }
@@ -340,12 +362,12 @@ class Saml2CertificatesPage extends Page implements HasForms
             return null;
         }
 
-        $filename = 'saml_certificate_' . ($this->domain ?? 'cert') . '.pem';
+        $filename = 'saml_certificate_' . ($this->domain ?? 'cert') . '.cert';
         
         return response()->streamDownload(function () {
             echo $this->certificateContent;
         }, $filename, [
-            'Content-Type' => 'application/x-pem-file',
+            'Content-Type' => 'application/x-x509-ca-cert',
         ]);
     }
 
@@ -360,12 +382,12 @@ class Saml2CertificatesPage extends Page implements HasForms
             return null;
         }
 
-        $filename = 'saml_private_key_' . ($this->domain ?? 'key') . '.pem';
+        $filename = 'saml_private_key_' . ($this->domain ?? 'key') . '.cert';
         
         return response()->streamDownload(function () {
             echo $this->privateKeyContent;
         }, $filename, [
-            'Content-Type' => 'application/x-pem-file',
+            'Content-Type' => 'application/x-x509-ca-cert',
         ]);
     }
 
