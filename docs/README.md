@@ -5,13 +5,9 @@ Esta carpeta contiene las capturas de pantalla y recursos visuales del plugin.
 ## 📸 **Imágenes Disponibles:**
 
 ### **Logo Principal:**
-- `logo.svg` - Logo del plugin con iconos de proveedores (SVG)
+- `logo.png` - Logo del plugin con iconos de proveedores
 
-### **Placeholders:**
-- `placeholder.svg` - Imagen placeholder para capturas de pantalla
-
-### **Nota sobre Capturas de Pantalla:**
-Las capturas de pantalla reales se pueden agregar reemplazando `placeholder.svg` con:
+### **Capturas de Pantalla:**
 - `config-main.png` - Pantalla principal de configuración
 - `config-okta.png` - Configuración de Okta y proveedor de identidad
 - `config-sp.png` - Configuración del proveedor de servicio
