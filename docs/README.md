@@ -5,16 +5,14 @@ Esta carpeta contiene las capturas de pantalla y recursos visuales del plugin.
 ## 📸 **Imágenes Disponibles:**
 
 ### **Logo Principal:**
-- `logo.png` - Logo del plugin con iconos de proveedores
+- `logo header principal plugin.png` - Logo del plugin con iconos de proveedores
 
 ### **Capturas de Pantalla:**
-- `config-main.png` - Pantalla principal de configuración
-- `config-okta.png` - Configuración de Okta y proveedor de identidad
-- `config-sp.png` - Configuración del proveedor de servicio
-- `config-users.png` - Configuración de usuarios
-- `config-interface.png` - Configuración de la interfaz
-- `debug-logs.png` - Pantalla de debug y logs
-- `field-mapper.png` - Mapeador de campos SAML2
+- `config usuarios debug certificados.png` - Configuración de usuarios, debug y certificados
+- `config basica y proveedor de identidad .png` - Configuración básica y proveedor de identidad
+- `config del proveedor de servicio.png` - Configuración del proveedor de servicio
+- `config mapeo de campos.png` - Configuración de mapeo de campos e interfaz
+- `pagina debug ver logs.png` - Página de debug y logs
 
 ## 🎨 **Especificaciones de las Imágenes:**
 
