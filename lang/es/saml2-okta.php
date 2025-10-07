@@ -106,5 +106,24 @@ return [
     'buttons' => [
         'login_with_okta' => 'Iniciar sesión con Okta',
         'login_with_saml2' => 'Iniciar sesión con SAML2',
+        'login_with_microsoft' => 'Iniciar sesión con Microsoft',
+        'login_with_google' => 'Iniciar sesión con Google',
+        'login_with_auth0' => 'Iniciar sesión con Auth0',
+    ],
+    
+    'icons' => [
+        'okta' => 'Okta',
+        'microsoft' => 'Microsoft',
+        'google' => 'Google',
+        'auth0' => 'Auth0',
+        'heroicons' => 'Heroicons',
+        'shield_check' => 'Shield Check',
+        'lock_closed' => 'Lock Closed',
+        'key' => 'Key',
+        'rocket_launch' => 'Rocket Launch',
+        'user' => 'User',
+        'login' => 'Login',
+        'identification' => 'Identification',
+        'finger_print' => 'Finger Print',
     ],
 ];

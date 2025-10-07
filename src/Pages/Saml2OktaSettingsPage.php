@@ -6,6 +6,7 @@ use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -281,11 +282,31 @@ class Saml2OktaSettingsPage extends SettingsPage
                             ->default('Iniciar sesión con Okta')
                             ->maxLength(255),
                         
-                        TextInput::make('button_icon')
+                        Select::make('button_icon')
                             ->label('Icono del botón')
-                            ->default('heroicon-o-shield-check')
-                            ->maxLength(255)
-                            ->helperText('Nombre del icono de Heroicons'),
+                            ->options([
+                                // Iconos de proveedores
+                                'okta' => 'Okta',
+                                'microsoft' => 'Microsoft',
+                                'google' => 'Google',
+                                'auth0' => 'Auth0',
+                                
+                                // Separador
+                                '---' => '--- Heroicons ---',
+                                
+                                // Heroicons
+                                'heroicon-o-shield-check' => 'Shield Check',
+                                'heroicon-o-lock-closed' => 'Lock Closed',
+                                'heroicon-o-key' => 'Key',
+                                'heroicon-o-rocket-launch' => 'Rocket Launch',
+                                'heroicon-o-user' => 'User',
+                                'heroicon-o-login' => 'Login',
+                                'heroicon-o-identification' => 'Identification',
+                                'heroicon-o-finger-print' => 'Finger Print',
+                            ])
+                            ->default('okta')
+                            ->searchable()
+                            ->helperText('Selecciona un icono de proveedor o Heroicon para el botón de login'),
                     ])
                     ->columns(2),
             ])
