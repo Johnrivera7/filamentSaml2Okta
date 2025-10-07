@@ -29,4 +29,25 @@ class Saml2Controller
     {
         return $this->saml2Service->handleCallback($request);
     }
+
+    public function metadata()
+    {
+        return $this->saml2Service->getMetadata();
+    }
+
+    public function config()
+    {
+        $config = \JohnRiveraGonzalez\Saml2Okta\Models\Saml2OktaConfig::getActiveConfig();
+        
+        if (!$config) {
+            return response()->json(['is_active' => false]);
+        }
+
+        return response()->json([
+            'is_active' => $config->is_active,
+            'button_label' => $config->button_label,
+            'button_icon' => $config->button_icon,
+            'login_url' => route('saml2.login'),
+        ]);
+    }
 }

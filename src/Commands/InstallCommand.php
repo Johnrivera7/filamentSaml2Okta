@@ -22,7 +22,18 @@ class InstallCommand extends Command
         // Ejecutar migraciones
         $this->call('migrate');
 
+        // Extender modelo User
+        $this->call('saml2-okta:extend-user-model');
+
+        // Extender UserResource
+        $this->call('saml2-okta:extend-user-resource');
+
+        // Registrar middleware
+        $this->call('saml2-okta:register-middleware');
+
         $this->info('Plugin SAML2 Okta instalado exitosamente!');
+        $this->info('Los campos SAML2 han sido agregados automáticamente al modelo User y UserResource.');
+        $this->info('El middleware para el botón SAML2 ha sido registrado.');
         $this->info('Puedes configurar SAML2 desde el panel de administración.');
 
         return self::SUCCESS;

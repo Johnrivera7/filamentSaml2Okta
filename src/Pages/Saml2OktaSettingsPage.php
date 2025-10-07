@@ -2,7 +2,7 @@
 
 namespace JohnRiveraGonzalez\Saml2Okta\Pages;
 
-use Filament\Pages\Page;
+use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -13,10 +13,13 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Notifications\Notification;
 use JohnRiveraGonzalez\Saml2Okta\Models\Saml2OktaConfig;
+use JohnRiveraGonzalez\Saml2Okta\Services\CertificateService;
 
-class Saml2OktaSettingsPage extends Page implements HasForms, HasActions
+class Saml2OktaSettingsPage extends SettingsPage
 {
     use InteractsWithForms, InteractsWithActions;
 
@@ -28,9 +31,9 @@ class Saml2OktaSettingsPage extends Page implements HasForms, HasActions
 
     protected static ?string $navigationLabel = 'Configuración SAML2';
 
-    protected static ?string $navigationGroup = 'Autenticación';
+    protected static ?string $navigationGroup = 'SAML2';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static bool $shouldRegisterNavigation = true;
 
@@ -48,6 +51,15 @@ class Saml2OktaSettingsPage extends Page implements HasForms, HasActions
         if ($config) {
             $this->form->fill($config->toArray());
         }
+        
+        // Establecer valores automáticos
+        $this->data['sp_entity_id'] = url('/saml2/metadata');
+        $this->data['callback_url'] = url('/saml2/callback');
+    }
+    
+    public static function getSettings(): string
+    {
+        return 'saml2-okta';
     }
 
     public function form(Form $form): Form
@@ -78,7 +90,9 @@ class Saml2OktaSettingsPage extends Page implements HasForms, HasActions
                             ->required()
                             ->url()
                             ->maxLength(255)
-                            ->helperText('URL de callback para SAML2. Ejemplo: https://sistema.tdx.test/saml2/callback'),
+                            ->default(fn () => url('/saml2/callback'))
+                            ->helperText('URL de callback para SAML2 (se genera automáticamente)')
+                            ->readOnly(),
                     ])
                     ->columns(2),
 
@@ -126,7 +140,9 @@ class Saml2OktaSettingsPage extends Page implements HasForms, HasActions
                             ->label('SP Entity ID')
                             ->required()
                             ->maxLength(255)
-                            ->helperText('Entity ID de tu aplicación. Ejemplo: https://sistema.tdx.test/saml2/metadata'),
+                            ->default(fn () => url('/saml2/metadata'))
+                            ->helperText('Entity ID de tu aplicación (se genera automáticamente)')
+                            ->readOnly(),
                         
                         Textarea::make('sp_x509_cert')
                             ->label('SP X.509 Certificate')
@@ -139,8 +155,119 @@ class Saml2OktaSettingsPage extends Page implements HasForms, HasActions
                             ->required()
                             ->rows(10)
                             ->helperText('Clave privada de tu aplicación'),
+                        
+                        // Botones de gestión de certificados
+                        Actions::make([
+                            FormAction::make('generateCertificates')
+                                ->label('Generar Certificados')
+                                ->icon('heroicon-o-plus')
+                                ->color('success')
+                                ->action('generateCertificates'),
+                            
+                            FormAction::make('regenerateCertificates')
+                                ->label('Regenerar Certificados')
+                                ->icon('heroicon-o-arrow-path')
+                                ->color('warning')
+                                ->requiresConfirmation()
+                                ->action('regenerateCertificates'),
+                        ])
+                        ->columns(2),
+                    ])
+                    ->columns(1),
+
+                Section::make('Configuración de Usuarios')
+                    ->description('Configuración del manejo de usuarios SAML2')
+                    ->schema([
+                        Toggle::make('auto_create_users')
+                            ->label('Crear usuarios automáticamente')
+                            ->default(true)
+                            ->helperText('Crear usuarios automáticamente cuando se autentican por primera vez'),
+                        
+                        Toggle::make('auto_update_users')
+                            ->label('Actualizar usuarios existentes')
+                            ->default(true)
+                            ->helperText('Actualizar datos de usuarios existentes con información de Okta'),
+                        
+                        TextInput::make('default_role')
+                            ->label('Rol por defecto')
+                            ->default('user')
+                            ->maxLength(255)
+                            ->helperText('Rol que se asignará a nuevos usuarios SAML2'),
+                        
+                        Toggle::make('mark_as_external')
+                            ->label('Marcar como usuario externo')
+                            ->default(true)
+                            ->helperText('Marcar usuarios SAML2 como usuarios externos'),
+                        
+                        TextInput::make('okta_id_field')
+                            ->label('Campo para ID de Okta')
+                            ->default('okta_id')
+                            ->maxLength(255)
+                            ->helperText('Nombre del campo donde guardar el ID de Okta (se creará automáticamente)'),
                     ])
                     ->columns(2),
+
+                Section::make('Configuración de Debug')
+                    ->description('Configuración del modo debug y logging')
+                    ->schema([
+                        Toggle::make('debug_mode')
+                            ->label('Modo Debug')
+                            ->helperText('Activar logging detallado para análisis de campos SAML')
+                            ->default(false),
+                        
+                        Actions::make([
+                            FormAction::make('viewLogs')
+                                ->label('Ver Logs Debug')
+                                ->icon('heroicon-o-bug-ant')
+                                ->color('info')
+                                ->url(fn () => '/admin/saml2-debug'),
+                        ]),
+                    ])
+                    ->columns(1),
+
+                Section::make('Gestión de Certificados')
+                    ->description('Generar y gestionar certificados SAML2')
+                    ->schema([
+                        Actions::make([
+                            FormAction::make('viewCertificates')
+                                ->label('Gestionar Certificados')
+                                ->icon('heroicon-o-key')
+                                ->color('warning')
+                                ->url(fn () => '/admin/saml2-certificates'),
+                            
+                            FormAction::make('viewMetadata')
+                                ->label('Ver Metadatos SAML2')
+                                ->icon('heroicon-o-document-text')
+                                ->color('info')
+                                ->url(fn () => '/saml2/metadata')
+                                ->openUrlInNewTab(),
+                        ]),
+                    ])
+                    ->columns(1),
+
+                Section::make('Mapeo de Campos')
+                    ->description('Configurar mapeo de campos SAML a User')
+                    ->schema([
+                        Actions::make([
+                            FormAction::make('viewFieldMapper')
+                                ->label('Mapeador de Campos')
+                                ->icon('heroicon-o-map')
+                                ->color('success')
+                                ->url(fn () => '/admin/saml2-field-mapper'),
+                        ]),
+                    ])
+                    ->columns(1),
+
+                Section::make('Configuración de Mapeo de Campos')
+                    ->description('Configuración del mapeo de campos SAML a User')
+                    ->schema([
+                        Textarea::make('field_mappings')
+                            ->label('Mapeo de Campos')
+                            ->rows(8)
+                            ->helperText('Configuración JSON del mapeo de campos (usa el Mapeador de Campos para configurar)')
+                            ->placeholder('{"email": "email", "name": "name", "givenName": "firstname"}'),
+                    ])
+                    ->columns(1),
 
                 Section::make('Configuración de la Interfaz')
                     ->description('Configuración del botón de inicio de sesión')
@@ -165,23 +292,51 @@ class Saml2OktaSettingsPage extends Page implements HasForms, HasActions
             ->statePath('data');
     }
 
-    protected function getFormActions(): array
+    public function getHeaderActions(): array
+    {
+        return [
+            Action::make('save')
+                ->label('Guardar Configuración')
+                ->icon('heroicon-o-check')
+                ->color('success')
+                ->action('save'),
+            
+            Action::make('test')
+                ->label('Probar Conexión')
+                ->icon('heroicon-o-wifi')
+                ->color('warning')
+                ->action('testConnection'),
+        ];
+    }
+
+    public function getFormActions(): array
     {
         return [
             Action::make('save')
                 ->label('Guardar configuración')
                 ->action('save'),
-            
-            Action::make('test')
-                ->label('Probar conexión')
-                ->color('warning')
-                ->action('testConnection'),
         ];
     }
 
     public function save(): void
     {
         $data = $this->form->getState();
+        
+        // Establecer valores automáticos
+        $data['sp_entity_id'] = url('/saml2/metadata');
+        $data['callback_url'] = url('/saml2/callback');
+        
+        // Asegurar que los campos booleanos tengan valores correctos
+        $data['auto_create_users'] = (bool) ($data['auto_create_users'] ?? false);
+        $data['auto_update_users'] = (bool) ($data['auto_update_users'] ?? false);
+        $data['mark_as_external'] = (bool) ($data['mark_as_external'] ?? false);
+        $data['debug_mode'] = (bool) ($data['debug_mode'] ?? false);
+        $data['is_active'] = (bool) ($data['is_active'] ?? true);
+        
+        // Establecer valores por defecto para campos opcionales
+        $data['default_role'] = $data['default_role'] ?? 'user';
+        $data['okta_id_field'] = $data['okta_id_field'] ?? 'okta_id';
+        $data['field_mappings'] = $data['field_mappings'] ?? [];
         
         // Desactivar todas las configuraciones existentes
         Saml2OktaConfig::where('is_active', true)->update(['is_active' => false]);
@@ -202,18 +357,175 @@ class Saml2OktaSettingsPage extends Page implements HasForms, HasActions
     public function testConnection(): void
     {
         try {
-            // Aquí implementarías la lógica para probar la conexión
-            // Por ahora, solo simulamos una prueba exitosa
+            $data = $this->form->getState();
             
+            // Validar campos requeridos
+            $requiredFields = [
+                'client_id' => 'Client ID',
+                'idp_entity_id' => 'IDP Entity ID',
+                'idp_sso_url' => 'IDP SSO URL',
+                'idp_x509_cert' => 'IDP X.509 Certificate',
+                'sp_x509_cert' => 'SP X.509 Certificate',
+                'sp_private_key' => 'SP Private Key'
+            ];
+            
+            $missingFields = [];
+            foreach ($requiredFields as $field => $label) {
+                if (empty($data[$field])) {
+                    $missingFields[] = $label;
+                }
+            }
+            
+            if (!empty($missingFields)) {
+                Notification::make()
+                    ->title('Campos requeridos faltantes')
+                    ->body('Por favor completa los siguientes campos: ' . implode(', ', $missingFields))
+                    ->warning()
+                    ->send();
+                return;
+            }
+            
+            // Validar formato del certificado
+            if (!str_contains($data['idp_x509_cert'], '-----BEGIN CERTIFICATE-----')) {
+                Notification::make()
+                    ->title('Certificado inválido')
+                    ->body('El certificado de Okta debe incluir las líneas BEGIN y END CERTIFICATE')
+                    ->warning()
+                    ->send();
+                return;
+            }
+            
+            // Validar formato del certificado SP
+            if (!str_contains($data['sp_x509_cert'], '-----BEGIN CERTIFICATE-----')) {
+                Notification::make()
+                    ->title('Certificado SP inválido')
+                    ->body('El certificado SP debe incluir las líneas BEGIN y END CERTIFICATE')
+                    ->warning()
+                    ->send();
+                return;
+            }
+            
+            // Si llegamos aquí, la configuración parece válida
             Notification::make()
-                ->title('Conexión exitosa')
-                ->body('La conexión con Okta se ha establecido correctamente.')
+                ->title('Configuración válida')
+                ->body('Todos los campos requeridos están completos y tienen el formato correcto.')
                 ->success()
                 ->send();
+                
         } catch (\Exception $e) {
             Notification::make()
-                ->title('Error de conexión')
-                ->body('No se pudo establecer la conexión con Okta: ' . $e->getMessage())
+                ->title('Error de validación')
+                ->body('Error al validar la configuración: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    public function generateCertificates(): void
+    {
+        if (!isset($this->data['sp_entity_id']) || empty($this->data['sp_entity_id'])) {
+            Notification::make()
+                ->title('Error')
+                ->body('Primero debes configurar el SP Entity ID')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            $parsedUrl = parse_url($this->data['sp_entity_id']);
+            $domain = $parsedUrl['host'] ?? null;
+            
+            if (!$domain) {
+                throw new \Exception('No se pudo extraer el dominio del SP Entity ID');
+            }
+
+            $certificateService = new CertificateService();
+            $result = $certificateService->generateCertificate($domain, 'SAML2 Okta Plugin');
+
+            if ($result['success']) {
+                // Actualizar los campos de certificado en el formulario
+                $this->data['sp_x509_cert'] = $result['certificate'];
+                $this->data['sp_private_key'] = $result['private_key'];
+                
+                Notification::make()
+                    ->title('Certificados generados exitosamente')
+                    ->body('Los certificados han sido generados y configurados automáticamente. Recuerda guardar la configuración.')
+                    ->success()
+                    ->send();
+            } else {
+                throw new \Exception($result['error']);
+            }
+        } catch (\Exception $e) {
+            Notification::make()
+                ->title('Error generando certificados')
+                ->body('No se pudieron generar los certificados: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    public function showCertificate(): void
+    {
+        if (!empty($this->data['generated_certificate'])) {
+            $this->data['generated_certificate'] = $this->data['generated_certificate'];
+            Notification::make()
+                ->title('Certificado mostrado')
+                ->success()
+                ->send();
+        }
+    }
+
+    public function showPrivateKey(): void
+    {
+        if (!empty($this->data['generated_private_key'])) {
+            $this->data['generated_private_key'] = $this->data['generated_private_key'];
+            Notification::make()
+                ->title('Clave privada mostrada')
+                ->success()
+                ->send();
+        }
+    }
+
+    public function regenerateCertificates(): void
+    {
+        if (!isset($this->data['sp_entity_id']) || empty($this->data['sp_entity_id'])) {
+            Notification::make()
+                ->title('Error')
+                ->body('Primero debes configurar el SP Entity ID')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            $parsedUrl = parse_url($this->data['sp_entity_id']);
+            $domain = $parsedUrl['host'] ?? null;
+            
+            if (!$domain) {
+                throw new \Exception('No se pudo extraer el dominio del SP Entity ID');
+            }
+
+            $certificateService = new CertificateService();
+            $result = $certificateService->regenerateCertificate($domain, 'SAML2 Okta Plugin');
+
+            if ($result['success']) {
+                // Actualizar los campos de certificado en el formulario
+                $this->data['sp_x509_cert'] = $result['certificate'];
+                $this->data['sp_private_key'] = $result['private_key'];
+                
+                Notification::make()
+                    ->title('Certificados regenerados exitosamente')
+                    ->body('Los certificados han sido regenerados con nuevas claves. Recuerda guardar la configuración.')
+                    ->success()
+                    ->send();
+            } else {
+                throw new \Exception($result['error']);
+            }
+        } catch (\Exception $e) {
+            Notification::make()
+                ->title('Error regenerando certificados')
+                ->body('No se pudieron regenerar los certificados: ' . $e->getMessage())
                 ->danger()
                 ->send();
         }

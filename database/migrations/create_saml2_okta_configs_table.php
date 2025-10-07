@@ -25,6 +25,18 @@ return new class extends Migration
             $table->boolean('is_active')->default(false);
             $table->string('button_label')->default('Iniciar sesión con Okta');
             $table->string('button_icon')->default('heroicon-o-shield-check');
+            
+            // Configuración de usuarios
+            $table->boolean('auto_create_users')->default(true);
+            $table->boolean('auto_update_users')->default(true);
+            $table->string('default_role')->default('user');
+            $table->boolean('mark_as_external')->default(true);
+            $table->string('okta_id_field')->default('okta_id');
+            
+            // Configuración de debug y mapeo
+            $table->boolean('debug_mode')->default(false);
+            $table->json('field_mappings')->nullable();
+            
             $table->timestamps();
         });
     }

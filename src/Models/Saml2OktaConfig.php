@@ -25,10 +25,35 @@ class Saml2OktaConfig extends Model
         'is_active',
         'button_label',
         'button_icon',
+        'auto_create_users',
+        'auto_update_users',
+        'default_role',
+        'mark_as_external',
+        'okta_id_field',
+        'debug_mode',
+        'field_mappings',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'auto_create_users' => 'boolean',
+        'auto_update_users' => 'boolean',
+        'mark_as_external' => 'boolean',
+        'debug_mode' => 'boolean',
+        'field_mappings' => 'array',
+    ];
+
+    protected $attributes = [
+        'auto_create_users' => true,
+        'auto_update_users' => true,
+        'mark_as_external' => true,
+        'debug_mode' => false,
+        'default_role' => 'user',
+        'okta_id_field' => 'okta_id',
+        'is_active' => false,
+        'button_label' => 'Iniciar sesión con Okta',
+        'button_icon' => 'heroicon-o-shield-check',
+        'field_mappings' => '[]',
     ];
 
     protected $hidden = [

@@ -8,4 +8,6 @@ Route::middleware('web')->group(function () {
     Route::get('/saml2/login', [Saml2Controller::class, 'redirect'])->name('saml2.login');
     Route::get('/saml2/callback', [Saml2Controller::class, 'callback'])->name('saml2.callback');
     Route::get('/auth/callback', [Saml2Controller::class, 'callback'])->name('auth.callback');
+    Route::get('/saml2/metadata', [Saml2Controller::class, 'metadata'])->name('saml2.metadata');
+Route::get('/admin/saml2-config', [Saml2Controller::class, 'config'])->name('saml2.config');
 });
