@@ -81,15 +81,34 @@ class Saml2OktaConfig extends Model
             'metadata' => $this->idp_metadata_url,
             'acs' => $this->callback_url,
             'entityid' => $this->idp_entity_id,
-            'certificate' => $this->idp_x509_cert,
+            'certificate' => $this->normalizeCertificate($this->idp_x509_cert),
             'sp_entity_id' => $this->sp_entity_id,
             'idp_entity_id' => $this->idp_entity_id,
             'idp_sso_url' => $this->idp_sso_url,
-            'idp_x509_cert' => $this->idp_x509_cert,
+            'idp_x509_cert' => $this->normalizeCertificate($this->idp_x509_cert),
             'idp_slo_url' => $this->idp_slo_url,
-            'sp_x509_cert' => $this->sp_x509_cert,
-            'sp_private_key' => $this->sp_private_key,
+            'sp_x509_cert' => $this->normalizeCertificate($this->sp_x509_cert),
+            'sp_private_key' => $this->normalizeCertificate($this->sp_private_key),
             'stateless' => true, // SAML2 es stateless por naturaleza
         ];
+    }
+    
+    /**
+     * Normalizar certificados y claves privadas
+     * Convierte \n escapados a saltos de línea reales
+     */
+    protected function normalizeCertificate(?string $certificate): ?string
+    {
+        if (!$certificate) {
+            return null;
+        }
+        
+        // Reemplazar \n escapados con saltos de línea reales
+        $normalized = str_replace('\\n', "\n", $certificate);
+        
+        // Asegurar que no haya dobles saltos de línea
+        $normalized = str_replace("\n\n", "\n", $normalized);
+        
+        return $normalized;
     }
 }
