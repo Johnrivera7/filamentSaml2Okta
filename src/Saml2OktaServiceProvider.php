@@ -83,6 +83,9 @@ class Saml2OktaServiceProvider extends ServiceProvider
         // Registrar el driver SAML2 de Socialite
         $this->bootSocialiteDriver();
         
+        // Excluir rutas SAML2 de verificación CSRF
+        $this->excludeFromCsrfVerification();
+        
         // Registrar configuración de logging
         $this->mergeConfigFrom(__DIR__ . '/../config/logging.php', 'logging.channels');
     }
@@ -97,6 +100,23 @@ class Saml2OktaServiceProvider extends ServiceProvider
             \SocialiteProviders\Manager\SocialiteWasCalled::class,
             [\SocialiteProviders\Saml2\Saml2ExtendSocialite::class, 'handle']
         );
+    }
+    
+    /**
+     * Excluir rutas SAML2 de la verificación CSRF
+     */
+    protected function excludeFromCsrfVerification(): void
+    {
+        // Extender el middleware VerifyCsrfToken para excluir rutas SAML2
+        $this->app->resolving(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class, function ($middleware) {
+            $middleware->except(array_merge(
+                $middleware->except ?? [],
+                [
+                    'saml2/callback',
+                    'auth/callback',
+                ]
+            ));
+        });
     }
 
     public function register(): void
