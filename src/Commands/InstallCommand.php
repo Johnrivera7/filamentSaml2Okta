@@ -52,8 +52,7 @@ class InstallCommand extends Command
     {
         $directories = [
             storage_path('logs'),
-            storage_path('app/saml2-okta'),
-            storage_path('app/saml2-okta/debug'),
+            storage_path('app/saml2-okta-debug'),
         ];
         
         foreach ($directories as $directory) {
