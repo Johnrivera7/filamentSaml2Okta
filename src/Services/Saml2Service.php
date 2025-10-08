@@ -53,21 +53,20 @@ class Saml2Service
     /**
      * Iniciar el flujo SAML2
      */
-    public function redirect(): \Illuminate\Http\RedirectResponse
+    public function redirect(): \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
     {
         $config = $this->configureSocialite();
-        
+
         if (!$config) {
             return redirect('/admin/login')->with('error', 'Configuración SAML2 no disponible');
         }
 
         try {
-            $redirectUrl = Socialite::driver('saml2')->redirect();
-            Log::info('SAML2 redirect iniciado correctamente');
-            return $redirectUrl;
+            return Socialite::driver('saml2')->redirect();
         } catch (\Exception $e) {
             Log::error('Error en SAML2 redirect: ' . $e->getMessage());
-            return redirect('/admin/login')->with('error', 'Error al iniciar sesión con Okta');
+            Log::error('Error trace: ' . $e->getTraceAsString());
+            return redirect('/admin/login')->with('error', 'Error al iniciar sesión con Okta: ' . $e->getMessage());
         }
     }
 

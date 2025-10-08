@@ -80,11 +80,23 @@ class Saml2OktaServiceProvider extends ServiceProvider
             return new Saml2Service();
         });
         
+        // Registrar el driver SAML2 de Socialite
+        $this->bootSocialiteDriver();
         
         // Registrar configuración de logging
         $this->mergeConfigFrom(__DIR__ . '/../config/logging.php', 'logging.channels');
-        
-        
+    }
+    
+    /**
+     * Registrar el driver SAML2 de Socialite
+     */
+    protected function bootSocialiteDriver(): void
+    {
+        // Registrar el listener de SocialiteWasCalled
+        $this->app['events']->listen(
+            \SocialiteProviders\Manager\SocialiteWasCalled::class,
+            [\SocialiteProviders\Saml2\Saml2ExtendSocialite::class, 'handle']
+        );
     }
 
     public function register(): void
