@@ -116,13 +116,26 @@ class Saml2Service
                 }
 
                 // Log completo del usuario SAML
+                $rawAttributes = $samlUser->getRaw();
+                
+                // Convertir atributos SAML a array legible
+                $parsedAttributes = [];
+                if (is_array($rawAttributes)) {
+                    foreach ($rawAttributes as $attr) {
+                        if ($attr instanceof \LightSaml\Model\Assertion\Attribute) {
+                            $parsedAttributes[$attr->getName()] = $attr->getFirstAttributeValue();
+                        }
+                    }
+                }
+                
                 $samlUserData = [
                     'id' => $samlUser->getId(),
                     'name' => $samlUser->getName(),
                     'email' => $samlUser->getEmail(),
                     'nickname' => $samlUser->getNickname(),
                     'avatar' => $samlUser->getAvatar(),
-                    'attributes' => $samlUser->getRaw(),
+                    'raw_attributes' => $rawAttributes,
+                    'parsed_attributes' => $parsedAttributes,
                 ];
                 $this->debugService->logSamlUser($samlUserData);
 
