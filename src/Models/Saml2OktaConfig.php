@@ -89,6 +89,7 @@ class Saml2OktaConfig extends Model
             'idp_slo_url' => $this->idp_slo_url,
             'sp_x509_cert' => $this->sp_x509_cert,
             'sp_private_key' => $this->sp_private_key,
+            'stateless' => true, // SAML2 es stateless por naturaleza
         ];
     }
 }
