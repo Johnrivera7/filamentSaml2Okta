@@ -82,9 +82,9 @@ class Saml2OktaSettingsPage extends SettingsPage
                         
                         TextInput::make('client_secret')
                             ->label('Client Secret')
-                            ->required()
                             ->maxLength(255)
-                            ->password(),
+                            ->dehydrateStateUsing(fn ($state) => filled($state) ? $state : null)
+                            ->helperText('Déjalo en blanco si no quieres cambiarlo (solo para actualizar configuración existente)'),
                         
                         TextInput::make('callback_url')
                             ->label('Callback URL')
@@ -153,9 +153,9 @@ class Saml2OktaSettingsPage extends SettingsPage
                         
                         Textarea::make('sp_private_key')
                             ->label('SP Private Key')
-                            ->required()
                             ->rows(10)
-                            ->helperText('Clave privada de tu aplicación'),
+                            ->dehydrateStateUsing(fn ($state) => filled($state) ? $state : null)
+                            ->helperText('Clave privada de tu aplicación. Déjalo en blanco si no quieres cambiarlo.'),
                         
                         // Botones de gestión de certificados
                         Actions::make([
@@ -364,6 +364,17 @@ class Saml2OktaSettingsPage extends SettingsPage
         foreach ($certificateFields as $field) {
             if (isset($data[$field]) && !empty($data[$field])) {
                 $data[$field] = $this->formatCertificate($data[$field]);
+            }
+        }
+        
+        // Si client_secret o sp_private_key vienen vacíos, no los actualices (mantén el valor actual)
+        $existingConfig = Saml2OktaConfig::where('name', $data['name'])->first();
+        if ($existingConfig) {
+            if (empty($data['client_secret'])) {
+                $data['client_secret'] = $existingConfig->client_secret;
+            }
+            if (empty($data['sp_private_key'])) {
+                $data['sp_private_key'] = $existingConfig->sp_private_key;
             }
         }
         
