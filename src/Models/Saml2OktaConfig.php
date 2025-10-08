@@ -91,6 +91,14 @@ class Saml2OktaConfig extends Model
             'sp_certificate' => $this->getSpCertificate(), // El provider usa este campo para desencriptar
             'sp_private_key' => $this->getSpPrivateKey(),
             'stateless' => true, // SAML2 es stateless por naturaleza
+            // Mapeo de atributos SAML a propiedades del User de Socialite
+            'attribute_map' => [
+                'email' => 'email',
+                'name' => 'firstname',
+                'firstname' => 'firstname',
+                'lastname' => 'lastname',
+                'idnumber' => 'id',
+            ],
         ];
     }
     
