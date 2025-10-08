@@ -116,7 +116,14 @@ class Saml2Service
                 }
 
                 // Log completo del usuario SAML
-                $samlUserData = $samlUser->toArray();
+                $samlUserData = [
+                    'id' => $samlUser->getId(),
+                    'name' => $samlUser->getName(),
+                    'email' => $samlUser->getEmail(),
+                    'nickname' => $samlUser->getNickname(),
+                    'avatar' => $samlUser->getAvatar(),
+                    'attributes' => $samlUser->getRaw(),
+                ];
                 $this->debugService->logSamlUser($samlUserData);
 
                 // Crear o actualizar usuario en la base de datos
