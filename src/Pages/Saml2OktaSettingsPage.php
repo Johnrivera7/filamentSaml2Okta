@@ -359,6 +359,19 @@ class Saml2OktaSettingsPage extends SettingsPage
         $data['okta_id_field'] = $data['okta_id_field'] ?? 'okta_id';
         $data['field_mappings'] = $data['field_mappings'] ?? [];
         
+        // Normalizar certificados: eliminar \n literales y dejar solo saltos de línea reales
+        $certificateFields = ['idp_x509_cert', 'sp_x509_cert', 'sp_private_key'];
+        foreach ($certificateFields as $field) {
+            if (isset($data[$field]) && !empty($data[$field])) {
+                // Eliminar todos los saltos de línea (tanto \n literales como reales)
+                $cleaned = str_replace(['\n', "\r\n", "\r", "\n"], '', $data[$field]);
+                // Eliminar espacios
+                $cleaned = str_replace(' ', '', $cleaned);
+                // Reconstruir con saltos de línea reales cada 64 caracteres
+                $data[$field] = $this->formatCertificate($cleaned);
+            }
+        }
+        
         // Desactivar todas las configuraciones existentes
         Saml2OktaConfig::where('is_active', true)->update(['is_active' => false]);
         
@@ -550,5 +563,33 @@ class Saml2OktaSettingsPage extends SettingsPage
                 ->danger()
                 ->send();
         }
+    }
+    
+    /**
+     * Formatear certificado con saltos de línea correctos
+     */
+    protected function formatCertificate(string $certificate): string
+    {
+        // Extraer las líneas BEGIN y END si existen
+        $hasBegin = str_contains($certificate, '-----BEGIN');
+        $hasEnd = str_contains($certificate, '-----END');
+        
+        // Determinar el tipo (CERTIFICATE o PRIVATE KEY)
+        $type = 'CERTIFICATE';
+        if (str_contains($certificate, 'PRIVATE KEY')) {
+            $type = 'PRIVATE KEY';
+        }
+        
+        // Limpiar completamente el certificado
+        $cleaned = preg_replace('/-----BEGIN.*?-----/', '', $certificate);
+        $cleaned = preg_replace('/-----END.*?-----/', '', $cleaned);
+        $cleaned = preg_replace('/\s+/', '', $cleaned);
+        
+        // Dividir en líneas de 64 caracteres
+        $formatted = chunk_split($cleaned, 64, "\n");
+        $formatted = trim($formatted);
+        
+        // Agregar headers y footers
+        return "-----BEGIN {$type}-----\n{$formatted}\n-----END {$type}-----";
     }
 }
