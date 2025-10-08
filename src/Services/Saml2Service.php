@@ -102,7 +102,18 @@ class Saml2Service
 
             // Verificar si es una SAML Response (usuario regresando de Okta)
             if ($request->has('SAMLResponse')) {
-                $samlUser = Socialite::driver('saml2')->user();
+                try {
+                    $samlUser = Socialite::driver('saml2')->user();
+                } catch (\Exception $e) {
+                    $this->debugService->logSamlError('Error al obtener usuario de Socialite: ' . $e->getMessage(), [
+                        'exception_class' => get_class($e),
+                        'exception_code' => $e->getCode(),
+                        'exception_file' => $e->getFile(),
+                        'exception_line' => $e->getLine(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    return redirect('/admin/login')->with('error', 'Error al procesar la respuesta SAML2: ' . $e->getMessage());
+                }
 
                 // Log completo del usuario SAML
                 $samlUserData = $samlUser->toArray();
