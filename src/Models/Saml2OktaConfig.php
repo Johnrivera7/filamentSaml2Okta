@@ -81,34 +81,31 @@ class Saml2OktaConfig extends Model
             'metadata' => $this->idp_metadata_url,
             'acs' => $this->callback_url,
             'entityid' => $this->idp_entity_id,
-            'certificate' => $this->normalizeCertificate($this->idp_x509_cert),
+            'certificate' => $this->idp_x509_cert,
             'sp_entity_id' => $this->sp_entity_id,
             'idp_entity_id' => $this->idp_entity_id,
             'idp_sso_url' => $this->idp_sso_url,
-            'idp_x509_cert' => $this->normalizeCertificate($this->idp_x509_cert),
+            'idp_x509_cert' => $this->idp_x509_cert,
             'idp_slo_url' => $this->idp_slo_url,
-            'sp_x509_cert' => $this->normalizeCertificate($this->sp_x509_cert),
-            'sp_private_key' => $this->normalizeCertificate($this->sp_private_key),
+            'sp_x509_cert' => $this->getSpCertificate(),
+            'sp_private_key' => $this->getSpPrivateKey(),
             'stateless' => true, // SAML2 es stateless por naturaleza
         ];
     }
     
     /**
-     * Normalizar certificados y claves privadas
-     * Convierte \n escapados a saltos de línea reales
+     * Obtener el certificado SP (prioriza .env sobre BD)
      */
-    protected function normalizeCertificate(?string $certificate): ?string
+    protected function getSpCertificate(): ?string
     {
-        if (!$certificate) {
-            return null;
-        }
-        
-        // Reemplazar \n escapados con saltos de línea reales
-        $normalized = str_replace('\\n', "\n", $certificate);
-        
-        // Asegurar que no haya dobles saltos de línea
-        $normalized = str_replace("\n\n", "\n", $normalized);
-        
-        return $normalized;
+        return env('SAML2_SP_X509_CERT') ?: $this->sp_x509_cert;
+    }
+    
+    /**
+     * Obtener la clave privada SP (prioriza .env sobre BD)
+     */
+    protected function getSpPrivateKey(): ?string
+    {
+        return env('SAML2_SP_PRIVATE_KEY') ?: $this->sp_private_key;
     }
 }
