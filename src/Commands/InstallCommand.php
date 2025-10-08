@@ -27,6 +27,9 @@ class InstallCommand extends Command
 
         // Extender UserResource
         $this->call('saml2-okta:extend-user-resource');
+        
+        // Crear directorios de logs y debug
+        $this->createLogDirectories();
 
         $this->info('✅ Plugin SAML2 Okta instalado exitosamente!');
         $this->newLine();
@@ -40,5 +43,32 @@ class InstallCommand extends Command
         $this->info('3. Generar certificados desde: /admin/saml2-certificates');
 
         return self::SUCCESS;
+    }
+    
+    /**
+     * Crear directorios necesarios para logs y debug
+     */
+    protected function createLogDirectories(): void
+    {
+        $directories = [
+            storage_path('logs'),
+            storage_path('app/saml2-okta'),
+            storage_path('app/saml2-okta/debug'),
+        ];
+        
+        foreach ($directories as $directory) {
+            if (!file_exists($directory)) {
+                mkdir($directory, 0775, true);
+                $this->info("✓ Directorio creado: {$directory}");
+            }
+        }
+        
+        // Crear archivo de log vacío
+        $logFile = storage_path('logs/saml2-okta.log');
+        if (!file_exists($logFile)) {
+            touch($logFile);
+            chmod($logFile, 0664);
+            $this->info("✓ Archivo de log creado: {$logFile}");
+        }
     }
 }
