@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class SamlDebugService
 {
-    protected string $storagePath = 'saml2-okta/debug';
+    protected string $storagePath = 'saml2-okta-debug';
     
     public function __construct()
     {

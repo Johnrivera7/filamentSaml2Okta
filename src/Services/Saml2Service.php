@@ -260,17 +260,23 @@ class Saml2Service
                 // Usuario existente - actualizar si está configurado
                 if ($config->auto_update_users) {
                     $user->update($userData);
-                    Log::info('Usuario SAML2 actualizado', ['user_id' => $user->id]);
+                    Log::info('[SAML2] Usuario actualizado', ['user_id' => $user->id, 'email' => $email]);
+                } else {
+                    Log::info('[SAML2] Usuario encontrado pero auto-actualización deshabilitada', ['user_id' => $user->id]);
                 }
             } else {
                 // Usuario nuevo - crear si está configurado
-                if ($config->auto_create_users) {
-                    $user = User::create($userData);
-                    Log::info('Usuario SAML2 creado', ['user_id' => $user->id]);
-                } else {
-                    Log::warning('Auto-creación de usuarios deshabilitada');
+                if (!$config->auto_create_users) {
+                    Log::warning('[SAML2] Auto-creación de usuarios deshabilitada', [
+                        'email' => $email,
+                        'okta_id' => $oktaId,
+                        'message' => 'Activa la auto-creación de usuarios en la configuración del plugin'
+                    ]);
                     return null;
                 }
+                
+                $user = User::create($userData);
+                Log::info('[SAML2] Usuario creado', ['user_id' => $user->id, 'email' => $email]);
             }
 
             // Asignar rol por defecto si no tiene ninguno
