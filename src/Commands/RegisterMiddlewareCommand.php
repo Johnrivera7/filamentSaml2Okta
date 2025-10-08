@@ -9,42 +9,21 @@ class RegisterMiddlewareCommand extends Command
 {
     protected $signature = 'saml2-okta:register-middleware';
 
-    protected $description = 'Registrar middleware para inyectar botón SAML2';
+    protected $description = '[OBSOLETO] Este comando ya no es necesario. El plugin usa Filament Render Hooks';
 
     public function handle(): int
     {
-        $this->info('Registrando middleware SAML2...');
-
-        $kernelPath = app_path('Http/Kernel.php');
-        
-        if (!File::exists($kernelPath)) {
-            $this->error('No se encontró el archivo Kernel.php');
-            return self::FAILURE;
-        }
-
-        $content = File::get($kernelPath);
-        
-        // Verificar si ya está registrado
-        if (strpos($content, 'InjectSaml2ButtonMiddleware') !== false) {
-            $this->info('El middleware ya está registrado.');
-            return self::SUCCESS;
-        }
-
-        // Agregar el middleware al array $middlewareGroups
-        $pattern = '/(\s+)(\\\\Illuminate\\\\Routing\\\\Middleware\\\\SubstituteBindings::class,)/';
-        $replacement = '$1$2' . "\n" . 
-            '$1\\\\JohnRiveraGonzalez\\\\Saml2Okta\\\\Middleware\\\\InjectSaml2ButtonMiddleware::class,';
-        
-        $newContent = preg_replace($pattern, $replacement, $content);
-        
-        if ($newContent !== $content) {
-            File::put($kernelPath, $newContent);
-            $this->info('Middleware registrado exitosamente.');
-        } else {
-            $this->warn('No se pudo registrar el middleware automáticamente.');
-            $this->info('Registra manualmente en app/Http/Kernel.php:');
-            $this->info('\\JohnRiveraGonzalez\\Saml2Okta\\Middleware\\InjectSaml2ButtonMiddleware::class,');
-        }
+        $this->warn('⚠️  Este comando está obsoleto y ya no es necesario.');
+        $this->newLine();
+        $this->info('El plugin SAML2 Okta ahora usa Filament Render Hooks para inyectar el botón de login.');
+        $this->info('No se requiere registrar ningún middleware manualmente.');
+        $this->newLine();
+        $this->info('✅ El botón de login se inyecta automáticamente cuando:');
+        $this->info('   1. El plugin está registrado en AdminPanelProvider.php');
+        $this->info('   2. La configuración SAML2 está activa en la base de datos');
+        $this->newLine();
+        $this->info('💡 Si tienes el middleware registrado en Kernel.php, ejecútalo para limpiarlo:');
+        $this->info('   php artisan saml2-okta:unregister-middleware');
 
         return self::SUCCESS;
     }

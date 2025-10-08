@@ -28,13 +28,16 @@ class InstallCommand extends Command
         // Extender UserResource
         $this->call('saml2-okta:extend-user-resource');
 
-        // Registrar middleware
-        $this->call('saml2-okta:register-middleware');
-
-        $this->info('Plugin SAML2 Okta instalado exitosamente!');
+        $this->info('✅ Plugin SAML2 Okta instalado exitosamente!');
+        $this->newLine();
         $this->info('Los campos SAML2 han sido agregados automáticamente al modelo User y UserResource.');
-        $this->info('El middleware para el botón SAML2 ha sido registrado.');
-        $this->info('Puedes configurar SAML2 desde el panel de administración.');
+        $this->info('El botón de login SAML2 se inyecta automáticamente usando Filament Render Hooks.');
+        $this->newLine();
+        $this->info('📋 Próximos pasos:');
+        $this->info('1. Registrar el plugin en app/Providers/Filament/AdminPanelProvider.php');
+        $this->info('   ->plugins([Saml2OktaPlugin::make()])');
+        $this->info('2. Configurar SAML2 desde el panel: /admin/saml2-settings');
+        $this->info('3. Generar certificados desde: /admin/saml2-certificates');
 
         return self::SUCCESS;
     }

@@ -372,19 +372,16 @@ El plugin incluye soporte para múltiples idiomas:
 ## 🔄 Comandos Disponibles
 
 ```bash
-# Instalación completa
+# Instalación completa (recomendado)
 php artisan saml2-okta:install
 
-# Extender modelo User
+# Extender modelo User (se ejecuta automáticamente con install)
 php artisan saml2-okta:extend-user-model
 
-# Extender UserResource
+# Extender UserResource (se ejecuta automáticamente con install)
 php artisan saml2-okta:extend-user-resource
 
-# Registrar middleware
-php artisan saml2-okta:register-middleware
-
-# Desregistrar middleware
+# Limpiar middleware obsoleto (solo si actualizas desde versión antigua)
 php artisan saml2-okta:unregister-middleware
 ```
 
@@ -393,7 +390,20 @@ php artisan saml2-okta:unregister-middleware
 - **El plugin es completamente automático** - No requiere cambios manuales en archivos
 - **Configuración en base de datos** - No usa archivos .env para configuración SAML2
 - **Extensión automática** - Extiende User model y UserResource automáticamente
-- **Middleware automático** - Registra middleware para inyectar botón de login
+- **Inyección automática del botón** - Usa Filament Render Hooks (no requiere middleware)
+- **Sin modificaciones al Kernel.php** - No necesitas registrar middleware manualmente
+
+### ⚠️ Si actualizas desde una versión anterior:
+
+Si instalaste una versión anterior del plugin que usaba middleware, ejecuta:
+
+```bash
+php artisan saml2-okta:unregister-middleware
+php artisan config:clear
+php artisan optimize
+```
+
+Esto limpiará cualquier referencia obsoleta al middleware `InjectSaml2ButtonMiddleware`.
 
 ## 🎨 Personalización de Iconos
 
