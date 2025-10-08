@@ -88,6 +88,7 @@ class Saml2OktaConfig extends Model
             'idp_x509_cert' => $this->idp_x509_cert,
             'idp_slo_url' => $this->idp_slo_url,
             'sp_x509_cert' => $this->getSpCertificate(),
+            'sp_certificate' => $this->getSpCertificate(), // El provider usa este campo para desencriptar
             'sp_private_key' => $this->getSpPrivateKey(),
             'stateless' => true, // SAML2 es stateless por naturaleza
         ];
