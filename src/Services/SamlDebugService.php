@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 
 class SamlDebugService
 {
-    protected string $logChannel = 'saml2-okta';
     protected string $storagePath = 'saml2-okta/debug';
     
     public function __construct()
@@ -34,8 +33,8 @@ class SamlDebugService
             'user_agent' => request()->userAgent(),
         ];
         
-        // Log a archivo específico
-        Log::channel($this->logChannel)->info('SAML ' . Str::title($type), $logData);
+        // Log a archivo de Laravel con prefijo SAML2
+        Log::info('[SAML2] ' . Str::title($type), $logData);
         
         // Guardar en storage para análisis posterior
         $filename = $this->storagePath . '/' . now()->format('Y-m-d') . '_' . $type . '_' . Str::random(8) . '.json';
@@ -58,8 +57,8 @@ class SamlDebugService
             'user_agent' => request()->userAgent(),
         ];
         
-        // Log a archivo específico
-        Log::channel($this->logChannel)->info('SAML ' . Str::title($type), $logData);
+        // Log a archivo de Laravel con prefijo SAML2
+        Log::info('[SAML2] ' . Str::title($type), $logData);
         
         // Guardar en storage para análisis posterior
         $filename = $this->storagePath . '/' . now()->format('Y-m-d') . '_' . $type . '_' . Str::random(8) . '.json';
@@ -83,8 +82,8 @@ class SamlDebugService
             'user_agent' => request()->userAgent(),
         ];
         
-        // Log a archivo específico
-        Log::channel($this->logChannel)->info('SAML User Mapping', $logData);
+        // Log a archivo de Laravel con prefijo SAML2
+        Log::info('[SAML2] User Mapping', $logData);
         
         // Guardar en storage para análisis posterior
         $filename = $this->storagePath . '/' . now()->format('Y-m-d') . '_user_mapping_' . Str::random(8) . '.json';
@@ -103,8 +102,8 @@ class SamlDebugService
             'user_agent' => request()->userAgent(),
         ];
         
-        // Log a archivo específico
-        Log::channel($this->logChannel)->error('SAML Error', $logData);
+        // Log a archivo de Laravel con prefijo SAML2
+        Log::error('[SAML2] Error', $logData);
         
         // Guardar en storage para análisis posterior
         $filename = $this->storagePath . '/' . now()->format('Y-m-d') . '_error_' . Str::random(8) . '.json';
