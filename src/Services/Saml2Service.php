@@ -228,14 +228,19 @@ class Saml2Service
             
             // Obtener firstname y lastname directamente de los atributos SAML
             $rawAttributes = $samlUser->getRaw();
-            $firstname = $rawAttributes['firstname'] ?? $rawAttributes['name'] ?? '';
+            $firstname = $rawAttributes['firstname'] ?? '';
             $lastname = $rawAttributes['lastname'] ?? '';
             
-            // Si lastname está vacío, intentar dividir el nombre completo
-            if (empty($lastname) && !empty($name)) {
+            // Solo si NO vienen firstname y lastname de Okta, intentar dividir el nombre completo
+            if (empty($firstname) && empty($lastname) && !empty($name)) {
                 $nameParts = explode(' ', $name, 2);
-                $firstname = $nameParts[0] ?? $firstname;
+                $firstname = $nameParts[0] ?? '';
                 $lastname = $nameParts[1] ?? '';
+            }
+            
+            // Si aún no hay firstname, usar el name completo
+            if (empty($firstname) && !empty($name)) {
+                $firstname = $name;
             }
             
             if (!$email) {
