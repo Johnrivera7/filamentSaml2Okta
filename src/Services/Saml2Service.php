@@ -226,10 +226,20 @@ class Saml2Service
             $name = $samlUser->getName();
             $oktaId = $samlUser->getId();
             
-            // Obtener firstname y lastname directamente de los atributos SAML
+            // Parsear atributos SAML de Okta
             $rawAttributes = $samlUser->getRaw();
-            $firstname = $rawAttributes['firstname'] ?? '';
-            $lastname = $rawAttributes['lastname'] ?? '';
+            $parsedAttributes = [];
+            if (is_array($rawAttributes)) {
+                foreach ($rawAttributes as $attr) {
+                    if ($attr instanceof \LightSaml\Model\Assertion\Attribute) {
+                        $parsedAttributes[$attr->getName()] = $attr->getFirstAttributeValue();
+                    }
+                }
+            }
+            
+            // Obtener firstname y lastname de los atributos parseados
+            $firstname = $parsedAttributes['firstname'] ?? '';
+            $lastname = $parsedAttributes['lastname'] ?? '';
             
             // Solo si NO vienen firstname y lastname de Okta, intentar dividir el nombre completo
             if (empty($firstname) && empty($lastname) && !empty($name)) {
