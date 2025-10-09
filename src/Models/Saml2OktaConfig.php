@@ -81,11 +81,11 @@ class Saml2OktaConfig extends Model
             'metadata' => $this->idp_metadata_url,
             'acs' => $this->callback_url,
             'entityid' => $this->idp_entity_id,
-            'certificate' => $this->idp_x509_cert,
+            'certificate' => $this->normalizeCertificate($this->idp_x509_cert),
             'sp_entity_id' => $this->sp_entity_id,
             'idp_entity_id' => $this->idp_entity_id,
             'idp_sso_url' => $this->idp_sso_url,
-            'idp_x509_cert' => $this->idp_x509_cert,
+            'idp_x509_cert' => $this->normalizeCertificate($this->idp_x509_cert),
             'idp_slo_url' => $this->idp_slo_url,
             'sp_x509_cert' => $this->getSpCertificate(),
             'sp_certificate' => $this->getSpCertificate(), // El provider usa este campo para desencriptar
@@ -107,7 +107,7 @@ class Saml2OktaConfig extends Model
      */
     protected function getSpCertificate(): ?string
     {
-        return $this->sp_x509_cert;
+        return $this->normalizeCertificate($this->sp_x509_cert);
     }
     
     /**
@@ -115,6 +115,19 @@ class Saml2OktaConfig extends Model
      */
     protected function getSpPrivateKey(): ?string
     {
-        return $this->sp_private_key;
+        return $this->normalizeCertificate($this->sp_private_key);
+    }
+    
+    /**
+     * Normalizar certificados: convertir \n literales a saltos reales
+     */
+    protected function normalizeCertificate(?string $certificate): ?string
+    {
+        if (!$certificate) {
+            return null;
+        }
+        
+        // Convertir \n escapados (como texto literal) a saltos de línea reales
+        return str_replace('\\n', "\n", $certificate);
     }
 }
