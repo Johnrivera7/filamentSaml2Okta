@@ -37,8 +37,7 @@ class SamlDebugService
         Log::info('[SAML2] ' . Str::title($type), $logData);
         
         // Guardar en storage para análisis posterior
-        $filename = $this->storagePath . '/' . now()->format('Y-m-d') . '_' . $type . '_' . Str::random(8) . '.json';
-        Storage::put($filename, json_encode($logData, JSON_PRETTY_PRINT));
+        $this->saveDebugFile($type, $logData);
     }
     
     public function logSamlResponse(array $data, string $type = 'response'): void
@@ -61,8 +60,7 @@ class SamlDebugService
         Log::info('[SAML2] ' . Str::title($type), $logData);
         
         // Guardar en storage para análisis posterior
-        $filename = $this->storagePath . '/' . now()->format('Y-m-d') . '_' . $type . '_' . Str::random(8) . '.json';
-        Storage::put($filename, json_encode($logData, JSON_PRETTY_PRINT));
+        $this->saveDebugFile($type, $logData);
     }
     
     public function logSamlUser(array $samlUser, array $mappedUser = []): void
@@ -86,8 +84,7 @@ class SamlDebugService
         Log::info('[SAML2] User Mapping', $logData);
         
         // Guardar en storage para análisis posterior
-        $filename = $this->storagePath . '/' . now()->format('Y-m-d') . '_user_mapping_' . Str::random(8) . '.json';
-        Storage::put($filename, json_encode($logData, JSON_PRETTY_PRINT));
+        $this->saveDebugFile('user_mapping', $logData);
     }
     
     public function logSamlError(string $error, array $context = []): void
@@ -106,8 +103,7 @@ class SamlDebugService
         Log::error('[SAML2] Error', $logData);
         
         // Guardar en storage para análisis posterior
-        $filename = $this->storagePath . '/' . now()->format('Y-m-d') . '_error_' . Str::random(8) . '.json';
-        Storage::put($filename, json_encode($logData, JSON_PRETTY_PRINT));
+        $this->saveDebugFile('error', $logData);
     }
     
     public function getDebugLogs(string $date = null): array
@@ -230,6 +226,39 @@ class SamlDebugService
             return $config && $config->debug_mode;
         } catch (\Exception $e) {
             return false;
+        }
+    }
+    
+    /**
+     * Guardar archivo de debug en storage
+     */
+    protected function saveDebugFile(string $type, array $logData): void
+    {
+        try {
+            $directory = storage_path('app/' . $this->storagePath);
+            
+            // Crear directorio si no existe
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0775, true);
+            }
+            
+            $filename = now()->format('Y-m-d') . '_' . $type . '_' . Str::random(8) . '.json';
+            $filepath = $directory . '/' . $filename;
+            
+            $result = File::put($filepath, json_encode($logData, JSON_PRETTY_PRINT));
+            
+            if ($result === false) {
+                Log::error('[SAML2] No se pudo guardar archivo de debug', [
+                    'filepath' => $filepath,
+                    'directory_exists' => File::exists($directory),
+                    'directory_writable' => File::isWritable($directory),
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('[SAML2] Error guardando archivo de debug: ' . $e->getMessage(), [
+                'type' => $type,
+                'exception' => get_class($e),
+            ]);
         }
     }
 }

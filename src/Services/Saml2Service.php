@@ -242,7 +242,8 @@ class Saml2Service
             $lastname = $nameParts[1] ?? '';
 
             $userData = [
-                'username' => $email, // Usar email como username
+                'email' => $email,
+                'username' => $email, // Usar email como username también
                 'firstname' => $firstname,
                 'lastname' => $lastname,
                 'password' => Hash::make(Str::random(32)), // Contraseña aleatoria
