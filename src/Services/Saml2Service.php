@@ -226,6 +226,18 @@ class Saml2Service
             $name = $samlUser->getName();
             $oktaId = $samlUser->getId();
             
+            // Obtener firstname y lastname directamente de los atributos SAML
+            $rawAttributes = $samlUser->getRaw();
+            $firstname = $rawAttributes['firstname'] ?? $rawAttributes['name'] ?? '';
+            $lastname = $rawAttributes['lastname'] ?? '';
+            
+            // Si lastname está vacío, intentar dividir el nombre completo
+            if (empty($lastname) && !empty($name)) {
+                $nameParts = explode(' ', $name, 2);
+                $firstname = $nameParts[0] ?? $firstname;
+                $lastname = $nameParts[1] ?? '';
+            }
+            
             if (!$email) {
                 Log::error('Usuario SAML2 sin email');
                 return null;
@@ -235,11 +247,6 @@ class Saml2Service
             $user = User::where('email', $email)
                 ->orWhere($config->okta_id_field, $oktaId)
                 ->first();
-
-            // Dividir el nombre en firstname y lastname
-            $nameParts = explode(' ', $name, 2);
-            $firstname = $nameParts[0] ?? '';
-            $lastname = $nameParts[1] ?? '';
 
             $userData = [
                 'email' => $email,
