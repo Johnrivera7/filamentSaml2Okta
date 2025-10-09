@@ -119,7 +119,7 @@ class Saml2OktaConfig extends Model
     }
     
     /**
-     * Normalizar certificados: convertir \n literales a saltos reales
+     * Normalizar certificados: limpiar y reformatear correctamente
      */
     protected function normalizeCertificate(?string $certificate): ?string
     {
@@ -127,7 +127,39 @@ class Saml2OktaConfig extends Model
             return null;
         }
         
-        // Convertir \n escapados (como texto literal) a saltos de línea reales
-        return str_replace('\\n', "\n", $certificate);
+        // Eliminar todos los \n literales y saltos de línea existentes
+        $certificate = str_replace(['\\n', "\n", "\r"], '', $certificate);
+        
+        // Eliminar espacios en blanco extra
+        $certificate = trim($certificate);
+        
+        // Detectar el tipo de certificado
+        $isPrivateKey = strpos($certificate, '-----BEGIN PRIVATE KEY-----') !== false;
+        $isCertificate = strpos($certificate, '-----BEGIN CERTIFICATE-----') !== false;
+        
+        if (!$isPrivateKey && !$isCertificate) {
+            return $certificate; // No es un certificado válido
+        }
+        
+        // Extraer el header, body y footer
+        if ($isPrivateKey) {
+            $header = '-----BEGIN PRIVATE KEY-----';
+            $footer = '-----END PRIVATE KEY-----';
+        } else {
+            $header = '-----BEGIN CERTIFICATE-----';
+            $footer = '-----END CERTIFICATE-----';
+        }
+        
+        // Extraer solo el cuerpo del certificado (sin headers)
+        $body = str_replace([$header, $footer], '', $certificate);
+        $body = trim($body);
+        
+        // Reformatear: agregar saltos de línea cada 64 caracteres
+        $formatted = $header . "\n";
+        $formatted .= chunk_split($body, 64, "\n");
+        $formatted = rtrim($formatted) . "\n"; // Eliminar último salto extra y agregar uno solo
+        $formatted .= $footer;
+        
+        return $formatted;
     }
 }
