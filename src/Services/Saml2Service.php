@@ -260,7 +260,7 @@ class Saml2Service
             if ($user) {
                 // Usuario existente - actualizar si está configurado
                 if ($config->auto_update_users) {
-                    $user->update($userData);
+                    $user->forceFill($userData)->save();
                     Log::info('[SAML2] Usuario actualizado', ['user_id' => $user->id, 'email' => $email]);
                 } else {
                     Log::info('[SAML2] Usuario encontrado pero auto-actualización deshabilitada', ['user_id' => $user->id]);
@@ -276,7 +276,8 @@ class Saml2Service
                     return null;
                 }
                 
-                $user = User::create($userData);
+                $user = new User();
+                $user->forceFill($userData)->save();
                 Log::info('[SAML2] Usuario creado', ['user_id' => $user->id, 'email' => $email]);
             }
 
