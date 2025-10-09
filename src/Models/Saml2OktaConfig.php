@@ -103,18 +103,18 @@ class Saml2OktaConfig extends Model
     }
     
     /**
-     * Obtener el certificado SP (prioriza .env sobre BD)
+     * Obtener el certificado SP
      */
     protected function getSpCertificate(): ?string
     {
-        return env('SAML2_SP_X509_CERT') ?: $this->sp_x509_cert;
+        return $this->sp_x509_cert;
     }
     
     /**
-     * Obtener la clave privada SP (prioriza .env sobre BD)
+     * Obtener la clave privada SP
      */
     protected function getSpPrivateKey(): ?string
     {
-        return env('SAML2_SP_PRIVATE_KEY') ?: $this->sp_private_key;
+        return $this->sp_private_key;
     }
 }

@@ -359,14 +359,6 @@ class Saml2OktaSettingsPage extends SettingsPage
         $data['okta_id_field'] = $data['okta_id_field'] ?? 'okta_id';
         $data['field_mappings'] = $data['field_mappings'] ?? [];
         
-        // Normalizar TODOS los certificados: eliminar \n literales y usar saltos reales
-        $certificateFields = ['idp_x509_cert', 'sp_x509_cert', 'sp_private_key'];
-        foreach ($certificateFields as $field) {
-            if (isset($data[$field]) && !empty($data[$field])) {
-                $data[$field] = $this->formatCertificate($data[$field]);
-            }
-        }
-        
         // Si client_secret o sp_private_key vienen vacíos, no los actualices (mantén el valor actual)
         $existingConfig = Saml2OktaConfig::where('name', $data['name'])->first();
         if ($existingConfig) {
