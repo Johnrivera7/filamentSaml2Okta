@@ -2,12 +2,15 @@
     "name": "johnriveragonzalez/saml2-okta",
     "description": "Complete SAML2 authentication plugin for Filament with Okta and other providers",
     "keywords": [
+        "johnriveragonzalez",
+        "laravel",
+        "filamentphp",
         "filament",
         "filament-plugin",
+        "saml2-okta",
         "saml2",
         "okta",
         "authentication",
-        "laravel",
         "sso",
         "identity-provider"
     ],
@@ -27,16 +30,17 @@
         "docs": "https://github.com/Johnrivera7/filamentSaml2Okta#readme"
     },
     "require": {
-        "php": "^8.1",
-        "filament/filament": "^3.0",
+        "php": "^8.2",
+        "filament/filament": "^5.0",
         "laravel/socialite": "^5.0",
         "socialiteproviders/manager": "^4.0",
-        "socialiteproviders/saml2": "^4.7"
+        "socialiteproviders/saml2": "^4.7",
+        "spatie/laravel-package-tools": "^1.15.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^8.0",
-        "pestphp/pest": "^2.0",
-        "pestphp/pest-plugin-laravel": "^2.0"
+        "orchestra/testbench": "^10.0|^11.0",
+        "pestphp/pest": "^3.7|^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0|^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -49,17 +53,20 @@
         }
     },
     "scripts": {
-        "test": "pest",
-        "test-coverage": "pest --coverage"
-    },
-    "config": {
-        "sort-packages": true
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "test": "pest"
     },
     "extra": {
         "laravel": {
             "providers": [
                 "JohnRiveraGonzalez\\Saml2Okta\\Saml2OktaServiceProvider"
             ]
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     },
     "minimum-stability": "stable",

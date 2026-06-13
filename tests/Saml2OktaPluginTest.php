@@ -8,29 +8,31 @@ use Orchestra\Testbench\TestCase;
 
 class Saml2OktaPluginTest extends TestCase
 {
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             Saml2OktaServiceProvider::class,
         ];
     }
 
-    public function test_plugin_can_be_instantiated()
+    public function test_plugin_can_be_instantiated(): void
     {
         $plugin = Saml2OktaPlugin::make();
-        
+
         $this->assertInstanceOf(Saml2OktaPlugin::class, $plugin);
     }
 
-    public function test_plugin_has_correct_id()
+    public function test_plugin_has_correct_id(): void
     {
         $plugin = Saml2OktaPlugin::make();
-        
+
         $this->assertEquals('saml2-okta', $plugin->getId());
     }
 
-    public function test_service_provider_is_registered()
+    public function test_service_provider_is_registered(): void
     {
-        $this->assertTrue($this->app->bound(Saml2OktaServiceProvider::class));
+        $this->assertTrue(
+            $this->app->getProvider(Saml2OktaServiceProvider::class) instanceof Saml2OktaServiceProvider,
+        );
     }
 }

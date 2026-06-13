@@ -2,20 +2,20 @@
 
 namespace JohnRiveraGonzalez\Saml2Okta\Pages;
 
-use Filament\Pages\Page;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use JohnRiveraGonzalez\Saml2Okta\Models\Saml2OktaConfig;
 use JohnRiveraGonzalez\Saml2Okta\Services\SamlDebugService;
 
@@ -48,17 +48,17 @@ class Saml2FieldMapperPage extends Page implements HasForms
         $this->loadSampleData();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Configuración de Mapeo')
                     ->description('Configura cómo se mapean los campos de Okta a tu modelo User')
                     ->schema([
                         Toggle::make('debug_mode')
                             ->label('Modo Debug')
                             ->helperText('Activa el logging detallado para analizar campos SAML')
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(fn () => $this->saveDebugMode()),
                     ])
                     ->columns(1),
@@ -80,7 +80,7 @@ class Saml2FieldMapperPage extends Page implements HasForms
                         Select::make('selectedDate')
                             ->label('Fecha de Logs')
                             ->options($this->getAvailableDates())
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(fn () => $this->loadSampleData()),
                         
                         Textarea::make('sampleSamlData')

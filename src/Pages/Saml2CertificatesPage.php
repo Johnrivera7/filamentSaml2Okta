@@ -2,16 +2,16 @@
 
 namespace JohnRiveraGonzalez\Saml2Okta\Pages;
 
-use Filament\Pages\Page;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use JohnRiveraGonzalez\Saml2Okta\Services\CertificateService;
 use JohnRiveraGonzalez\Saml2Okta\Models\Saml2OktaConfig;
 
@@ -53,10 +53,10 @@ class Saml2CertificatesPage extends Page implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Generar Nuevo Certificado')
                     ->description('Genera un nuevo certificado X.509 para SAML2')
                     ->schema([

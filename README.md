@@ -23,18 +23,27 @@ Un plugin completo para Laravel Filament que proporciona autenticación SAML2 co
 
 ## 📋 Requisitos
 
-- Laravel 10+
-- Filament 3.x
-- PHP 8.1+
+| Rama | Filament | Laravel | PHP |
+|------|----------|---------|-----|
+| `main` (v2.x) | 5.x | 11+ / 12+ | 8.2+ |
+| `4.x` (v2.x) | 4.x | 11+ | 8.2+ |
+| `1.x` (legacy) | 3.x | 10+ | 8.1+ |
 
 ## 🛠️ Instalación
+
+> Este plugin sigue las [guías oficiales de plugins de Filament](https://filamentphp.com/docs/5.x/plugins/getting-started): usa `PackageServiceProvider` de Spatie, un objeto `Plugin` que implementa `Filament\Contracts\Plugin`, y registro de assets/rutas/migraciones vía el service provider.
 
 ### Instalación en Desarrollo
 
 #### 1. Instalar el plugin
 
 ```bash
-composer require johnriveragonzalez/saml2-okta
+# Filament v5 (rama main)
+composer require johnriveragonzalez/saml2-okta:^2.0
+
+# Filament v4 (rama 4.x)
+composer require johnriveragonzalez/saml2-okta:^2.0 --prefer-source
+# En composer.json de tu app, apunta la rama: "4.x"
 ```
 
 #### 2. Publicar y ejecutar migraciones
@@ -55,7 +64,6 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         ->plugins([
-            // ... otros plugins
             Saml2OktaPlugin::make(),
         ]);
 }

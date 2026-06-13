@@ -2,25 +2,24 @@
 
 namespace JohnRiveraGonzalez\Saml2Okta\Pages;
 
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use JohnRiveraGonzalez\Saml2Okta\Models\Saml2OktaConfig;
 use JohnRiveraGonzalez\Saml2Okta\Services\CertificateService;
 
-class Saml2OktaSettingsPage extends SettingsPage
+class Saml2OktaSettingsPage extends Page implements HasActions, HasForms
 {
     use InteractsWithForms, InteractsWithActions;
 
@@ -58,15 +57,10 @@ class Saml2OktaSettingsPage extends SettingsPage
         $this->data['callback_url'] = url('/saml2/callback');
     }
     
-    public static function getSettings(): string
+    public function form(Schema $schema): Schema
     {
-        return 'saml2-okta';
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Configuración Básica')
                     ->description('Configuración básica para la autenticación SAML2 con Okta')
                     ->schema([
@@ -159,13 +153,13 @@ class Saml2OktaSettingsPage extends SettingsPage
                         
                         // Botones de gestión de certificados
                         Actions::make([
-                            FormAction::make('generateCertificates')
+                            Action::make('generateCertificates')
                                 ->label('Generar Certificados')
                                 ->icon('heroicon-o-plus')
                                 ->color('success')
                                 ->action('generateCertificates'),
                             
-                            FormAction::make('regenerateCertificates')
+                            Action::make('regenerateCertificates')
                                 ->label('Regenerar Certificados')
                                 ->icon('heroicon-o-arrow-path')
                                 ->color('warning')
@@ -217,7 +211,7 @@ class Saml2OktaSettingsPage extends SettingsPage
                             ->default(false),
                         
                         Actions::make([
-                            FormAction::make('viewLogs')
+                            Action::make('viewLogs')
                                 ->label('Ver Logs Debug')
                                 ->icon('heroicon-o-bug-ant')
                                 ->color('info')
@@ -230,13 +224,13 @@ class Saml2OktaSettingsPage extends SettingsPage
                     ->description('Generar y gestionar certificados SAML2')
                     ->schema([
                         Actions::make([
-                            FormAction::make('viewCertificates')
+                            Action::make('viewCertificates')
                                 ->label('Gestionar Certificados')
                                 ->icon('heroicon-o-key')
                                 ->color('warning')
                                 ->url(fn () => '/admin/saml2-certificates'),
                             
-                            FormAction::make('viewMetadata')
+                            Action::make('viewMetadata')
                                 ->label('Ver Metadatos SAML2')
                                 ->icon('heroicon-o-document-text')
                                 ->color('info')
@@ -250,7 +244,7 @@ class Saml2OktaSettingsPage extends SettingsPage
                     ->description('Configurar mapeo de campos SAML a User')
                     ->schema([
                         Actions::make([
-                            FormAction::make('viewFieldMapper')
+                            Action::make('viewFieldMapper')
                                 ->label('Mapeador de Campos')
                                 ->icon('heroicon-o-map')
                                 ->color('success')
