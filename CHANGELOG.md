@@ -2,6 +2,12 @@
 
 All notable changes to `johnriveragonzalez/saml2-okta` will be documented in this file.
 
+## [2.0.2] - 2026-09-09
+
+### Added
+
+- `SECURITY.md` with private vulnerability reporting guidance (Plumb security policy check).
+
 ## [2.0.1] - 2026-06-13
 
 ### Changed

@@ -9,6 +9,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/johnriveragonzalez/saml2-okta.svg?style=flat-square)](https://packagist.org/packages/johnriveragonzalez/saml2-okta)
 [![License](https://img.shields.io/packagist/l/johnriveragonzalez/saml2-okta.svg?style=flat-square)](LICENSE)
 [![Filament](https://img.shields.io/badge/Filament-4.x%20%7C%205.x-ffb020?style=flat-square)](https://filamentphp.com)
+[![Plumb score](https://plumbphp.dev/badges/johnriveragonzalez/saml2-okta/composite.svg)](https://plumbphp.dev/johnriveragonzalez/saml2-okta)
 
 </div>
 
